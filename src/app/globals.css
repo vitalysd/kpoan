@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-navy: #0f172a;
+    --color-graphite: #1e293b;
+    --color-slate: #334155;
+    --color-accent: #1797A5;
+    --color-accent-hover: #e55a28;
+    --color-light-gray: #f1f5f9;
+    --color-mid-gray: #e2e8f0;
+  }
+
+  /** {*/
+  /*  @apply border-border;*/
+  /*}*/
+
+  body {
+    @apply bg-slate-950 text-slate-900;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  h2 {
+    font-size: 2.25rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  p {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}

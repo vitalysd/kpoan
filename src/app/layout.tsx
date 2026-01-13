@@ -4,8 +4,8 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
 export const metadata: Metadata = {
-  title: "КПОАН",
-  description: "Комплексные поставки",
+  title: "ООО «КПОАН»",
+  description: "Комплексные поставки оборудования и инструмента",
 };
 
 export default function RootLayout({

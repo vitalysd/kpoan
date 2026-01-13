@@ -64,7 +64,6 @@ export function Header() {
         { label: 'О компании', id: 'about' },
         { label: 'Преимущества', id: 'advantages' },
         { label: 'Ассортимент', id: 'assortment' },
-        { label: 'Тендеры', id: 'tenders' },
         { label: 'Контакты', id: 'contacts' },
     ];
 
@@ -103,9 +102,9 @@ export function Header() {
 
                     {/* Contact Info & CTA */}
                     <div className="flex items-center gap-2 md:gap-4 lg:gap-6">
-                        <a href="tel:+78001234567" className="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm">
+                        <a href="tel:+79080942106" className="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm">
                             <Phone className="w-4 h-4" />
-                            <span className="hidden xl:inline">+7 (800) 123-45-67</span>
+                            <span className="hidden xl:inline">+7 (908) 094-21-06</span>
                         </a>
                         <a href="mailto:info@kpoan.ru" className="hidden xl:flex items-center gap-2 text-slate-300 hover:text-white transition-colors text-sm">
                             <Mail className="w-4 h-4" />
@@ -145,11 +144,11 @@ export function Header() {
                             ))}
                             <div className="border-t border-slate-700 pt-3 mt-2 flex flex-col gap-3">
                                 <a
-                                    href="tel:+78001234567"
+                                    href="tel:+79080942106"
                                     className="flex items-center gap-3 text-slate-300 hover:text-white py-3 px-4 rounded hover:bg-slate-700 transition-colors"
                                 >
                                     <Phone className="w-5 h-5" />
-                                    <span>+7 (800) 123-45-67</span>
+                                    <span>+7 (908) 094-21-06</span>
                                 </a>
                                 <a
                                     href="mailto:info@kpoan.ru"

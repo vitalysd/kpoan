@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle, MessageCircleDashed } from 'lucide-react';
+import { IoLogoWhatsapp } from "react-icons/io5";
+import { FaTelegramPlane } from "react-icons/fa";
 
 interface FormData {
     name: string;
@@ -21,19 +23,6 @@ export function Footer() {
         message: '',
         file: null,
     });
-
-    // const handleSubmit = (e: React.FormEvent) => {
-    //     e.preventDefault();
-    //     alert('Спасибо за обращение! Мы подготовим коммерческое предложение и свяжемся с вами в ближайшее время.');
-    //     setFormData({
-    //         name: '',
-    //         company: '',
-    //         phone: '',
-    //         email: '',
-    //         message: '',
-    //         file: null
-    //     });
-    // };
 
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
@@ -219,8 +208,8 @@ export function Footer() {
                                     </div>
                                     <div>
                                         <div className="text-slate-400 text-sm mb-1">Телефон</div>
-                                        <a href="tel:+78001234567" className="text-white text-lg hover:text-cyan-600 transition-colors">
-                                            +7 (800) 123-45-67
+                                        <a href="tel:+79080942106" className="text-white text-lg hover:text-cyan-600 transition-colors">
+                                            +7 (908) 094-21-06
                                         </a>
                                         <p className="text-slate-500 text-sm mt-1">Бесплатно по России</p>
                                     </div>
@@ -244,7 +233,7 @@ export function Footer() {
                                     </div>
                                     <div>
                                         <div className="text-slate-400 text-sm mb-1">Адрес офиса</div>
-                                        <p className="text-white">г. Москва, ул. Промышленная, д. 15</p>
+                                        <p className="text-white">г. Челябинск, ул. Ласковая, д. 20</p>
                                     </div>
                                 </div>
 
@@ -267,14 +256,11 @@ export function Footer() {
                                     <span className="text-white">Пишите в мессенджерах</span>
                                 </div>
                                 <div className="flex gap-3">
-                                    <a href="#" className="w-12 h-12 bg-slate-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors">
-                                        <span className="text-white text-lg">W</span>
+                                    <a href="https://wa.me/79823218085" className="w-12 h-12 bg-slate-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors">
+                                        <IoLogoWhatsapp className="w-5 h-5 text-white" />
                                     </a>
-                                    <a href="#" className="w-12 h-12 bg-slate-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors">
-                                        <span className="text-white text-lg">T</span>
-                                    </a>
-                                    <a href="#" className="w-12 h-12 bg-slate-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors">
-                                        <span className="text-white text-lg">V</span>
+                                    <a href="https://t.me/Alsu_Niz" className="w-12 h-12 bg-slate-700 hover:bg-cyan-600 rounded-lg flex items-center justify-center transition-colors">
+                                        <FaTelegramPlane className="w-5 h-5 text-white" />
                                     </a>
                                 </div>
                             </div>

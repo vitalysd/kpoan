@@ -39,14 +39,10 @@ export async function POST(request: Request) {
             html: `
         <h2>Новая заявка с сайта</h2>
         <p><strong>Имя:</strong> ${name}</p>
-        <p><strong>Контактное лицо:</strong> ${contactPerson}</p>
         <p><strong>Компания:</strong> ${company}</p>
         <p><strong>Телефон:</strong> ${phone}</p>
         <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Номер закупки:</strong> ${tenderNumber || '—'}</p>
-        <p><strong>Срок подачи:</strong> ${deadline}</p>
         <p><strong>Сообщение:</strong><br>${message || '—'}</p>
-        <p><strong>Описание:</strong><br>${description || '—'}</p>
         ${file ? `<p><strong>Прикреплен файл:</strong> ${file.name}</p>` : ''}
       `,
             attachments,

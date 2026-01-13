@@ -29,7 +29,7 @@ export function Tenders() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit2 = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
         setErrorMessage('');
@@ -123,7 +123,7 @@ export function Tenders() {
                         <div className="p-8 lg:p-12">
                             <h3 className="mb-6">Сообщите о вашей закупке</h3>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit2} className="space-y-4">
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm mb-2">Название компании *</label>
@@ -200,6 +200,7 @@ export function Tenders() {
                                         </label>
                                         <input
                                             type="date"
+                                            required
                                             disabled={status === 'loading'}
                                             value={formData.deadline}
                                             onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}

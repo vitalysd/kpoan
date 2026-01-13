@@ -7,49 +7,49 @@ const categories = [
         icon: Wrench,
         title: 'Электроинструмент',
         description: 'Дрели, перфораторы, шлифмашины, пилы от ведущих производителей',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Hammer,
         title: 'Ручной инструмент',
         description: 'Профессиональный инструмент для любых монтажных и ремонтных работ',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Zap,
         title: 'Электрооборудование',
         description: 'Кабели, щитовое оборудование, источники питания, автоматика',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Cog,
         title: 'Станки и оснастка',
         description: 'Металлообрабатывающее и деревообрабатывающее оборудование',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Box,
         title: 'Расходные материалы',
         description: 'Диски, сверла, буры, абразивы, крепеж, метизы в наличии',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Truck,
         title: 'Складская техника',
         description: 'Погрузчики, тележки, подъемники, стеллажи и стропы',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: HardHat,
         title: 'СИЗ и спецодежда',
         description: 'Средства индивидуальной защиты, спецобувь, перчатки',
-        link: '#assortment'
+        link: '#contacts'
     },
     {
         icon: Settings,
         title: 'Промышленные насосы',
         description: 'Насосное оборудование для воды, химии и нефтепродуктов',
-        link: '#assortment'
+        link: '#contacts'
     }
 ];
 

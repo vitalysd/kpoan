@@ -211,7 +211,6 @@ export function Footer() {
                                         <a href="tel:+79080942106" className="text-white text-lg hover:text-cyan-600 transition-colors">
                                             +7 (908) 094-21-06
                                         </a>
-                                        <p className="text-slate-500 text-sm mt-1">Бесплатно по России</p>
                                     </div>
                                 </div>
 

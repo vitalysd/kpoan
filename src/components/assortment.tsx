@@ -116,16 +116,16 @@ export function Assortment() {
                                         ))}
                                     </ul>
 
-                                    <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-200">
-                                        <button className="cursor-pointer bg-cyan-600 hover:bg-cyan-800 text-white px-6 py-3 rounded transition-colors flex items-center gap-2">
-                                            <FileText className="w-5 h-5" />
-                                            Получить список позиций
-                                        </button>
-                                        <button className="cursor-pointer border-2 border-slate-300 text-slate-700 hover:border-slate-400 px-6 py-3 rounded transition-colors flex items-center gap-2">
-                                            <Download className="w-5 h-5" />
-                                            Скачать пример каталога
-                                        </button>
-                                    </div>
+                                    {/*<div className="flex flex-wrap gap-4 pt-6 border-t border-slate-200">*/}
+                                    {/*    <button className="cursor-pointer bg-cyan-600 hover:bg-cyan-800 text-white px-6 py-3 rounded transition-colors flex items-center gap-2">*/}
+                                    {/*        <FileText className="w-5 h-5" />*/}
+                                    {/*        Получить список позиций*/}
+                                    {/*    </button>*/}
+                                    {/*    <button className="cursor-pointer border-2 border-slate-300 text-slate-700 hover:border-slate-400 px-6 py-3 rounded transition-colors flex items-center gap-2">*/}
+                                    {/*        <Download className="w-5 h-5" />*/}
+                                    {/*        Скачать пример каталога*/}
+                                    {/*    </button>*/}
+                                    {/*</div>*/}
                                 </div>
                             );
                         })}

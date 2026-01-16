@@ -70,7 +70,7 @@ export function Hero() {
                     <div className="relative">
                         <div className="relative rounded-lg overflow-hidden shadow-2xl">
                             <Image
-                                src="/hero2.jpg"
+                                src="/hero.jpg"
                                 className="w-full h-full object-cover"
                                 width={500}
                                 height={500}

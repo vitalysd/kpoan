@@ -1,64 +1,103 @@
 "use client";
-
 import { useState } from 'react';
-import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle, MessageCircleDashed } from 'lucide-react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle } from "lucide-react";
 import { IoLogoWhatsapp } from "react-icons/io5";
 import { FaTelegramPlane } from "react-icons/fa";
 
-interface FormData {
-    name: string;
-    company: string;
-    phone: string;
-    email: string;
-    message: string;
-    file: File | null;
-}
+const formSchema = z.object({
+    name: z.string().min(2, "Укажите ваше имя (минимум 2 символа)"),
+    company: z.string().min(2, "Укажите название компании"),
+    phone: z
+        .string()
+        .min(10, "Телефон слишком короткий")
+        .regex(
+            /^\+?\d[\d\s()-]{9,}$/,
+            "Некорректный формат телефона (пример: +79081234567)"
+        ),
+    email: z.string().email("Пожалуйста, введите корректный email"),
+    message: z.string().optional(),
+    file: z
+        .instanceof(File)
+        .optional()
+        .refine((file) => !file || file.size <= 10 * 1024 * 1024, {
+            message: "Максимальный размер файла — 10 МБ",
+        })
+        .refine(
+            (file) =>
+                !file ||
+                [
+                    "application/pdf",
+                    "application/msword",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "application/vnd.ms-excel",
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                ].includes(file.type),
+            { message: "Разрешены только: PDF, Word, Excel" }
+        ),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 export function Footer() {
-    const [formData, setFormData] = useState<FormData>({
-        name: '',
-        company: '',
-        phone: '',
-        email: '',
-        message: '',
-        file: null,
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+        reset,
+        watch,
+        setValue,
+    } = useForm<FormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            name: "",
+            company: "",
+            phone: "",
+            email: "",
+            message: "",
+            file: undefined,
+        },
     });
 
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "loading" | "success" | "error"
+    >("idle");
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setStatus('loading');
-        setErrorMessage('');
+    const selectedFile = watch("file");
 
-        const data = new FormData();
-        data.append('name', formData.name);
-        data.append('company', formData.company);
-        data.append('phone', formData.phone);
-        data.append('email', formData.email);
-        data.append('message', formData.message);
-        if (formData.file) {
-            data.append('file', formData.file);
-        }
+    const onSubmit = async (data: FormValues) => {
+        setSubmitStatus("loading");
+        setErrorMessage("");
 
         try {
-            const res = await fetch('/api/send-email', {
-                method: 'POST',
-                body: data,
+            const formData = new FormData();
+
+            formData.append("name", data.name);
+            formData.append("company", data.company);
+            formData.append("phone", data.phone);
+            formData.append("email", data.email);
+            if (data.message) formData.append("message", data.message);
+            if (data.file) formData.append("file", data.file);
+
+            const response = await fetch("/api/send-email", {
+                method: "POST",
+                body: formData,
             });
 
-            const json = await res.json();
+            const json = await response.json();
 
-            if (!res.ok) {
-                throw new Error(json.error || 'Ошибка отправки');
+            if (!response.ok) {
+                throw new Error(json.error || "Ошибка при отправке");
             }
 
-            setStatus('success');
-            setFormData({ name: '', company: '', phone: '', email: '', message: '', file: null });
+            setSubmitStatus("success");
+            reset();
         } catch (err: any) {
-            setStatus('error');
-            setErrorMessage(err.message || 'Что-то пошло не так');
+            setSubmitStatus("error");
+            setErrorMessage(err.message || "Что-то пошло не так...");
         }
     };
 
@@ -70,74 +109,102 @@ export function Footer() {
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* Left - Form */}
                         <div>
-                            <h2 className="text-white mb-4">Оставьте заявку — подготовим КП под ваши задачи</h2>
+                            <h2 className="text-white mb-4">
+                                Оставьте заявку — подготовим КП под ваши задачи
+                            </h2>
                             <p className="text-slate-400 mb-8">
                                 Заполните форму, и наш специалист свяжется с вами в течение 30 минут в рабочее время
                             </p>
 
-                            <form onSubmit={handleSubmit} className="space-y-4">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-slate-300 text-sm mb-2">Ваше имя *</label>
+                                        <label className="block text-slate-300 text-sm mb-2">
+                                            Ваше имя *
+                                        </label>
                                         <input
-                                            type="text"
-                                            required
-                                            disabled={status === 'loading'}
-                                            value={formData.name}
-                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50"
+                                            {...register("name")}
+                                            disabled={isSubmitting}
+                                            className={`w-full px-4 py-3 bg-slate-800 border rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50 ${
+                                                errors.name ? "border-red-600" : "border-slate-700"
+                                            }`}
                                             placeholder="Иван Петров"
                                         />
+                                        {errors.name && (
+                                            <p className="text-red-400 text-xs mt-1">
+                                                {errors.name.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-300 text-sm mb-2">Компания *</label>
+                                        <label className="block text-slate-300 text-sm mb-2">
+                                            Компания *
+                                        </label>
                                         <input
-                                            type="text"
-                                            required
-                                            disabled={status === 'loading'}
-                                            value={formData.company}
-                                            onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50"
+                                            {...register("company")}
+                                            disabled={isSubmitting}
+                                            className={`w-full px-4 py-3 bg-slate-800 border rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50 ${
+                                                errors.company ? "border-red-600" : "border-slate-700"
+                                            }`}
                                             placeholder="ООО «Название»"
                                         />
+                                        {errors.company && (
+                                            <p className="text-red-400 text-xs mt-1">
+                                                {errors.company.message}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
-                                        <label className="block text-slate-300 text-sm mb-2">Телефон *</label>
+                                        <label className="block text-slate-300 text-sm mb-2">
+                                            Телефон *
+                                        </label>
                                         <input
-                                            type="tel"
-                                            required
-                                            disabled={status === 'loading'}
-                                            value={formData.phone}
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50"
+                                            {...register("phone")}
+                                            disabled={isSubmitting}
+                                            className={`w-full px-4 py-3 bg-slate-800 border rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50 ${
+                                                errors.phone ? "border-red-600" : "border-slate-700"
+                                            }`}
                                             placeholder="+7 (___) ___-__-__"
                                         />
+                                        {errors.phone && (
+                                            <p className="text-red-400 text-xs mt-1">
+                                                {errors.phone.message}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <div>
-                                        <label className="block text-slate-300 text-sm mb-2">Email *</label>
+                                        <label className="block text-slate-300 text-sm mb-2">
+                                            Email *
+                                        </label>
                                         <input
+                                            {...register("email")}
                                             type="email"
-                                            required
-                                            disabled={status === 'loading'}
-                                            value={formData.email}
-                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50"
+                                            disabled={isSubmitting}
+                                            className={`w-full px-4 py-3 bg-slate-800 border rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50 ${
+                                                errors.email ? "border-red-600" : "border-slate-700"
+                                            }`}
                                             placeholder="email@company.ru"
                                         />
+                                        {errors.email && (
+                                            <p className="text-red-400 text-xs mt-1">
+                                                {errors.email.message}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 
                                 <div>
-                                    <label className="block text-slate-300 text-sm mb-2">Что нужно?</label>
+                                    <label className="block text-slate-300 text-sm mb-2">
+                                        Что нужно?
+                                    </label>
                                     <textarea
-                                        disabled={status === 'loading'}
-                                        value={formData.message}
-                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                        {...register("message")}
+                                        disabled={isSubmitting}
                                         rows={4}
                                         className="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded text-white focus:outline-none focus:border-cyan-600 disabled:opacity-50"
                                         placeholder="Опишите, какое оборудование требуется, или прикрепите спецификацию ниже..."
@@ -149,31 +216,51 @@ export function Footer() {
                                         <Upload className="w-4 h-4" />
                                         Прикрепить файл (спецификация, ТЗ)
                                     </label>
-                                    <div className="border-2 border-dashed border-slate-700 rounded-lg p-4 text-center hover:border-cyan-600 transition-colors bg-slate-800">
+
+                                    <div
+                                        className={`border-2 border-dashed rounded-lg p-4 text-center transition-colors bg-slate-800 ${
+                                            errors.file
+                                                ? "border-red-600"
+                                                : "border-slate-700 hover:border-cyan-600"
+                                        }`}
+                                    >
                                         <input
                                             type="file"
-                                            disabled={status === 'loading'}
-                                            onChange={(e) => setFormData({ ...formData, file: e.target.files?.[0] || null })}
-                                            className="hidden"
                                             id="footer-file-upload"
+                                            className="hidden"
+                                            disabled={isSubmitting}
                                             accept=".pdf,.doc,.docx,.xls,.xlsx"
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    setValue("file", file, { shouldValidate: true });
+                                                }
+                                            }}
                                         />
                                         <label htmlFor="footer-file-upload" className="cursor-pointer block">
                                             <Upload className="w-6 h-6 text-slate-500 mx-auto mb-2" />
                                             <p className="text-slate-400 text-sm">
-                                                {formData.file ? formData.file.name : 'Выберите файл или перетащите сюда'}
+                                                {selectedFile ? selectedFile.name : "Выберите файл или перетащите сюда"}
                                             </p>
-                                            <p className="text-slate-400 text-xs mt-1">PDF, DOC, DOCX, XLS, XLSX (макс. 10 МБ)</p>
+                                            <p className="text-slate-400 text-xs mt-1">
+                                                PDF, DOC, DOCX, XLS, XLSX (макс. 10 МБ)
+                                            </p>
                                         </label>
                                     </div>
+
+                                    {errors.file && (
+                                        <p className="text-red-400 text-xs mt-1">
+                                            {errors.file.message}
+                                        </p>
+                                    )}
                                 </div>
 
                                 <button
                                     type="submit"
-                                    disabled={status === 'loading'}
-                                    className="cursor-pointer w-full md:w-auto bg-cyan-600 hover:bg-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed text-white px-12 py-4 rounded transition-colors flex items-center justify-center gap-2"
+                                    disabled={isSubmitting}
+                                    className="w-full md:w-auto bg-cyan-600 hover:bg-cyan-800 disabled:opacity-50 disabled:cursor-not-allowed text-white px-12 py-4 rounded transition-colors flex items-center justify-center gap-2"
                                 >
-                                    {status === 'loading' ? (
+                                    {isSubmitting ? (
                                         <>Отправка...</>
                                     ) : (
                                         <>
@@ -183,12 +270,14 @@ export function Footer() {
                                     )}
                                 </button>
 
-                                {status === 'success' && (
-                                    <p className="text-green-400 text-center">Спасибо! Заявка отправлена. Мы свяжемся с вами в ближайшее время.</p>
+                                {submitStatus === "success" && (
+                                    <p className="text-green-400 text-center mt-4">
+                                        Спасибо! Заявка отправлена. Мы свяжемся с вами в ближайшее время.
+                                    </p>
                                 )}
 
-                                {status === 'error' && (
-                                    <p className="text-red-400 text-center">{errorMessage}</p>
+                                {submitStatus === "error" && (
+                                    <p className="text-red-400 text-center mt-4">{errorMessage}</p>
                                 )}
 
                                 <p className="text-slate-500 text-xs">

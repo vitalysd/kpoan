@@ -8,10 +8,6 @@ export async function POST(request: Request) {
         const formData = await request.formData();
 
         const name = formData.get('name') as string;
-        const contactPerson = formData.get('contactPerson') as string;
-        const tenderNumber = formData.get('tenderNumber') as string;
-        const deadline = formData.get('deadline') as string | null;
-        const description = formData.get('description') as string;
         const company = formData.get('company') as string;
         const phone = formData.get('phone') as string;
         const email = formData.get('email') as string;
@@ -33,8 +29,8 @@ export async function POST(request: Request) {
             : undefined;
 
         await resend.emails.send({
-            from: 'Сайт <info@demashin.site>', // Можно изменить на свой домен после верификации в Resend
-            to: ['demashinvitaly@gmail.com'], // Замени на свой email, куда приходят заявки
+            from: 'Сайт <info@kpoan.ru>', // Можно изменить на свой домен после верификации в Resend
+            to: ['info@kpoan.ru'], // Замени на свой email, куда приходят заявки
             subject: `Новая заявка от ${name} (${company})`,
             html: `
         <h2>Новая заявка с сайта</h2>

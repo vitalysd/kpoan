@@ -3,11 +3,32 @@
 import { useState, useEffect, useRef } from 'react';
 import { Phone, Mail, Menu, X } from 'lucide-react';
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const menuItems = [
+    { label: 'Главная', href: '/' },
+    { label: 'Каталог', href: '/catalog' },
+    { label: 'О компании', id: 'about', href: '/#about' },
+    { label: 'Преимущества', id: 'advantages', href: '/#advantages' },
+    { label: 'Ассортимент', id: 'assortment', href: '/#assortment' },
+    { label: 'Контакты', id: 'contacts', href: '/#contacts' },
+] as const;
+
+const sectionIds = menuItems
+    .filter((item) => item.id)
+    .map((item) => item.id);
+
+const topSectionIds = ['hero', 'categories'];
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [activeSection, setActiveSection] = useState<string | null>(null);
     const mobileMenuRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
+    const isHomePage = pathname === "/";
+    const hasSolidBackground = !isHomePage || isScrolled;
 
     useEffect(() => {
         const handleScroll = () => {
@@ -47,57 +68,134 @@ export function Header() {
         };
     }, [isMobileMenuOpen]);
 
-    const scrollToContacts = () => {
-        const contactsSection = document.getElementById('contacts');
-        contactsSection?.scrollIntoView({ behavior: 'smooth' });
-        setIsMobileMenuOpen(false);
-    };
+    useEffect(() => {
+        if (!isHomePage) {
+            return;
+        }
+
+        const observedIds = [...topSectionIds, ...sectionIds];
+        const sections = observedIds
+            .map((id) => document.getElementById(id))
+            .filter((section): section is HTMLElement => section instanceof HTMLElement);
+
+        if (!sections.length) return;
+
+        const updateActiveSection = () => {
+            const offset = 140;
+            const currentSection = [...sections]
+                .reverse()
+                .find((section) => section.getBoundingClientRect().top - offset <= 0);
+            setActiveSection(currentSection?.id ?? null);
+        };
+
+        updateActiveSection();
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                const visibleSections = entries
+                    .filter((entry) => entry.isIntersecting)
+                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+
+                if (visibleSections.length > 0) {
+                    setActiveSection(visibleSections[0].target.id);
+                    return;
+                }
+
+                updateActiveSection();
+            },
+            {
+                rootMargin: '-35% 0px -45% 0px',
+                threshold: [0.2, 0.35, 0.5, 0.75],
+            }
+        );
+
+        sections.forEach((section) => observer.observe(section));
+        window.addEventListener('scroll', updateActiveSection, { passive: true });
+
+        return () => {
+            observer.disconnect();
+            window.removeEventListener('scroll', updateActiveSection);
+        };
+    }, [isHomePage]);
 
     const scrollToSection = (id: string) => {
+        if (!isHomePage) return;
         const section = document.getElementById(id);
-        section?.scrollIntoView({ behavior: 'smooth' });
+        if (section) {
+            const headerOffset = 96;
+            const sectionTop = section.getBoundingClientRect().top + window.scrollY - headerOffset;
+            window.scrollTo({ top: sectionTop, behavior: 'smooth' });
+            setActiveSection(id);
+        }
         setIsMobileMenuOpen(false);
     };
 
-    const menuItems = [
-        { label: 'Главная', id: 'hero' },
-        { label: 'О компании', id: 'about' },
-        { label: 'Преимущества', id: 'advantages' },
-        { label: 'Ассортимент', id: 'assortment' },
-        { label: 'Контакты', id: 'contacts' },
-    ];
+    const isItemActive = (item: typeof menuItems[number]) => {
+        if (item.id) {
+            return isHomePage && activeSection === item.id;
+        }
+
+        if (item.href === '/') {
+            return isHomePage && (activeSection === null || topSectionIds.includes(activeSection));
+        }
+
+        return pathname === item.href;
+    };
 
     return (
         <header
             ref={mobileMenuRef}
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-                isScrolled ? 'bg-slate-900/95 backdrop-blur-sm shadow-lg' : 'bg-slate-900/50 backdrop-blur-sm'
+                hasSolidBackground
+                    ? 'bg-slate-900/95 backdrop-blur-sm shadow-lg'
+                    : 'bg-slate-900/50 backdrop-blur-sm'
             }`}
         >
             <div className="container mx-auto px-4 lg:px-8">
                 <div className="flex items-center justify-between h-16 md:h-20">
                     {/* Logo */}
-                    <div className="flex items-center">
+                    <Link href="/" className="flex items-center">
                         <Image
                             src="/logo.svg"
                             width={120}
                             height={50}
                             alt="ООО «КПОАН»"
                         />
-                    </div>
+                    </Link>
 
                     {/* Desktop Navigation */}
                     <nav className="hidden lg:flex items-center gap-6 xl:gap-8">
-                        {menuItems.map((item) => (
-                            <button
-                                key={item.id}
-                                onClick={() => scrollToSection(item.id)}
-                                className="group relative cursor-pointer text-white transition-colors text-sm"
-                            >
-                                {item.label}
-                                <span className="absolute top-6 left-0 w-0 h-0.5 bg-cyan-500 group-hover:w-full transition-all duration-300 origin-left" />
-                            </button>
-                        ))}
+                        {menuItems.map((item) => {
+                            const isActive = isItemActive(item);
+
+                            return item.id && isHomePage ? (
+                                <button
+                                    key={item.label}
+                                    onClick={() => scrollToSection(item.id!)}
+                                    className={`group relative cursor-pointer transition-colors text-sm ${
+                                        isActive ? 'text-cyan-400' : 'text-white hover:text-cyan-200'
+                                    }`}
+                                >
+                                    {item.label}
+                                    <span className={`absolute top-6 left-0 h-0.5 bg-cyan-500 transition-all duration-300 origin-left ${
+                                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                                    }`} />
+                                </button>
+                            ) : (
+                                <Link
+                                    key={item.label}
+                                    href={item.href}
+                                    className={`group relative transition-colors text-sm ${
+                                        isActive ? 'text-cyan-400' : 'text-white hover:text-cyan-200'
+                                    }`}
+                                >
+                                    {item.label}
+                                    <span className={`absolute top-6 left-0 h-0.5 bg-cyan-500 transition-all duration-300 origin-left ${
+                                        isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                                    }`} />
+                                </Link>
+                            );
+                        })}
                     </nav>
 
                     {/* Contact Info & CTA */}
@@ -110,13 +208,14 @@ export function Header() {
                             <Mail className="w-4 h-4" />
                             <span>info@kpoan.ru</span>
                         </a>
-                        <button
-                            onClick={scrollToContacts}
-                            className="cursor-pointer bg-cyan-500 hover:bg-cyan-700 text-white px-3 py-2 md:px-6 md:py-2.5 rounded transition-colors text-sm"
+                        <Link
+                            href="/#contacts"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="bg-cyan-500 hover:bg-cyan-700 text-white px-3 py-2 md:px-6 md:py-2.5 rounded transition-colors text-sm"
                         >
                             <span className="hidden sm:inline">Запросить КП</span>
                             <span className="sm:hidden">КП</span>
-                        </button>
+                        </Link>
 
                         {/* Mobile Menu Toggle */}
                         <button
@@ -133,15 +232,36 @@ export function Header() {
                 {isMobileMenuOpen && (
                     <nav className="lg:hidden bg-slate-800 rounded-lg mt-2 mb-4 py-4 px-4 shadow-xl animate-fadeIn">
                         <div className="flex flex-col gap-3">
-                            {menuItems.map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() => scrollToSection(item.id)}
-                                    className="text-slate-300 hover:text-white hover:bg-slate-700 transition-colors text-left py-3 px-4 rounded"
-                                >
-                                    {item.label}
-                                </button>
-                            ))}
+                            {menuItems.map((item) => {
+                                const isActive = isItemActive(item);
+
+                                return item.id && isHomePage ? (
+                                    <button
+                                        key={item.label}
+                                        onClick={() => scrollToSection(item.id!)}
+                                        className={`transition-colors text-left py-3 px-4 rounded ${
+                                            isActive
+                                                ? 'bg-slate-700 text-cyan-400'
+                                                : 'text-slate-300 hover:text-white hover:bg-slate-700'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </button>
+                                ) : (
+                                    <Link
+                                        key={item.label}
+                                        href={item.href}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`transition-colors text-left py-3 px-4 rounded ${
+                                            isActive
+                                                ? 'bg-slate-700 text-cyan-400'
+                                                : 'text-slate-300 hover:text-white hover:bg-slate-700'
+                                        }`}
+                                    >
+                                        {item.label}
+                                    </Link>
+                                );
+                            })}
                             <div className="border-t border-slate-700 pt-3 mt-2 flex flex-col gap-3">
                                 <a
                                     href="tel:+79080942106"

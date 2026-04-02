@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle } from "lucide-react";
 import { IoLogoWhatsapp } from "react-icons/io5";
 import { FaTelegramPlane } from "react-icons/fa";
+import { Reveal } from "@/components/reveal";
 
 const formSchema = z.object({
     name: z.string().min(2, "Укажите ваше имя (минимум 2 символа)"),
@@ -40,6 +41,9 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
+
+const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : "Что-то пошло не так...";
 
 export function Footer() {
     const {
@@ -95,9 +99,9 @@ export function Footer() {
 
             setSubmitStatus("success");
             reset();
-        } catch (err: any) {
+        } catch (err: unknown) {
             setSubmitStatus("error");
-            setErrorMessage(err.message || "Что-то пошло не так...");
+            setErrorMessage(getErrorMessage(err));
         }
     };
 
@@ -108,7 +112,7 @@ export function Footer() {
                 <div className="py-20 border-b border-slate-800">
                     <div className="grid lg:grid-cols-2 gap-12">
                         {/* Left - Form */}
-                        <div>
+                        <Reveal>
                             <h2 className="text-white mb-4">
                                 Оставьте заявку — подготовим КП под ваши задачи
                             </h2>
@@ -284,10 +288,10 @@ export function Footer() {
                                     Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
                                 </p>
                             </form>
-                        </div>
+                        </Reveal>
 
                         {/* Right - Contacts */}
-                        <div className="lg:pl-12">
+                        <Reveal className="lg:pl-12" delay={120}>
                             <h3 className="text-white mb-6">Контактная информация</h3>
 
                             <div className="space-y-6 mb-8">
@@ -352,7 +356,7 @@ export function Footer() {
                                     </a>
                                 </div>
                             </div>
-                        </div>
+                        </Reveal>
                     </div>
                 </div>
 

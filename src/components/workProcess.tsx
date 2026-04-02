@@ -1,6 +1,7 @@
 "use client";
 
 import { FileSearch, ClipboardCheck, Package, Truck } from 'lucide-react';
+import { Reveal } from "@/components/reveal";
 
 const steps = [
     {
@@ -41,12 +42,12 @@ export function WorkProcess() {
     return (
         <section className="py-20 bg-slate-100">
             <div className="container mx-auto px-4 lg:px-8">
-                <div className="text-center mb-12">
+                <Reveal className="text-center mb-12">
                     <h2 className="mb-4">Как мы работаем</h2>
                     <p className="text-slate-600 max-w-2xl mx-auto">
                         Прозрачный процесс от запроса до получения оборудования
                     </p>
-                </div>
+                </Reveal>
 
                 <div className="grid lg:grid-cols-2 gap-12 mb-16">
                     {/* Left - Timeline */}
@@ -56,7 +57,7 @@ export function WorkProcess() {
                             const isLast = index === steps.length - 1;
 
                             return (
-                                <div key={index} className="relative">
+                                <Reveal key={index} className="relative" delay={index * 90}>
                                     <div className="flex gap-6">
                                         {/* Number Circle */}
                                         <div className="relative flex-shrink-0">
@@ -80,13 +81,13 @@ export function WorkProcess() {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </Reveal>
                             );
                         })}
                     </div>
 
                     {/* Right - Map Illustration */}
-                    <div className="bg-white rounded-lg shadow-lg p-8">
+                    <Reveal className="bg-white rounded-lg shadow-lg p-8" delay={140}>
                         <h3 className="mb-6 text-center">Доставка по всей России</h3>
 
                         <div className="relative bg-slate-50 rounded-lg p-8 mb-6 min-h-[300px] flex items-center justify-center">
@@ -118,7 +119,7 @@ export function WorkProcess() {
                         <p className="text-slate-500 text-sm mt-4 text-center">
                             * Сроки указаны ориентировочные, зависят от наличия на складе и выбранной ТК
                         </p>
-                    </div>
+                    </Reveal>
                 </div>
             </div>
         </section>

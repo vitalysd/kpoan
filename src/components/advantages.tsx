@@ -1,6 +1,7 @@
 "use client";
 
 import { Package2, DollarSign, Clock, Headphones, FileCheck } from 'lucide-react';
+import { Reveal } from "@/components/reveal";
 
 const advantages = [
     {
@@ -34,19 +35,20 @@ export function Advantages() {
     return (
         <section id="advantages" className="py-20 bg-slate-100">
             <div className="container mx-auto px-4 lg:px-8">
-                <div className="text-center mb-12">
+                <Reveal className="text-center mb-12">
                     <h2 className="mb-4">Почему нас выбирают</h2>
                     <p className="text-slate-600 max-w-2xl mx-auto">
                         Мы знаем, что важно для промышленных компаний и строительных организаций
                     </p>
-                </div>
+                </Reveal>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {advantages.map((advantage, index) => {
                         const Icon = advantage.icon;
                         return (
-                            <div
+                            <Reveal
                                 key={index}
+                                delay={index * 70}
                                 className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                             >
                                 <div className="w-14 h-14 bg-slate-700/10 rounded-lg flex items-center justify-center mb-4">
@@ -54,7 +56,7 @@ export function Advantages() {
                                 </div>
                                 <h4 className="mb-3">{advantage.title}</h4>
                                 <p className="text-slate-600">{advantage.description}</p>
-                            </div>
+                            </Reveal>
                         );
                     })}
                 </div>

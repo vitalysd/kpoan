@@ -14,6 +14,9 @@ interface FormData {
     file: File | null;
 }
 
+const getErrorMessage = (error: unknown) =>
+    error instanceof Error ? error.message : 'Что-то пошло не так';
+
 export function Tenders() {
     const [formData, setFormData] = useState<FormData>({
         company: '',
@@ -73,9 +76,9 @@ export function Tenders() {
             // Сброс input file (чтобы имя файла исчезло)
             const fileInput = document.getElementById('file-upload') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
-        } catch (err: any) {
+        } catch (err: unknown) {
             setStatus('error');
-            setErrorMessage(err.message || 'Что-то пошло не так');
+            setErrorMessage(getErrorMessage(err));
         }
     };
 

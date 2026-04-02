@@ -2,6 +2,7 @@
 
 import { Award, MapPin, Handshake, Shield, Package, ClipboardCheck, FileText, CreditCard } from 'lucide-react';
 import Image from "next/image";
+import { Reveal } from "@/components/reveal";
 
 export function About() {
     return (
@@ -10,7 +11,7 @@ export function About() {
                 {/* Main Content */}
                 <div className="grid lg:grid-cols-2 gap-12 mb-16">
                     {/* Left - Text */}
-                    <div>
+                    <Reveal>
                         <h2 className="mb-6">ООО «КПОАН»</h2>
                         <p className="text-slate-600 mb-8 text-lg">
                             Надежный поставщик промышленного оборудования и инструмента для предприятий, производств и строительных компаний по всей России.
@@ -57,10 +58,10 @@ export function About() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Reveal>
 
                     {/* Right - Image */}
-                    <div className="relative rounded-lg overflow-hidden shadow-xl">
+                    <Reveal className="relative rounded-lg overflow-hidden shadow-xl" delay={120}>
                         <Image
                             src="/about.png"
                             className="w-full h-full object-cover"
@@ -68,42 +69,42 @@ export function About() {
                             height={500}
                             alt="Поставки инструмента"
                         />
-                    </div>
+                    </Reveal>
                 </div>
 
                 {/* Info Strip */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-slate-50 p-8 rounded-lg">
-                    <div className="text-center">
+                    <Reveal className="text-center" delay={0}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <Package className="w-6 h-6 text-cyan-600" />
                         </div>
                         <div className="mb-1">Комплексные поставки</div>
                         <p className="text-slate-600 text-sm">Весь спектр оборудования в одном КП</p>
-                    </div>
+                    </Reveal>
 
-                    <div className="text-center">
+                    <Reveal className="text-center" delay={80}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <ClipboardCheck className="w-6 h-6 text-cyan-600" />
                         </div>
                         <div className="mb-1">Подбор по ТЗ</div>
                         <p className="text-slate-600 text-sm">Персональный менеджер и консультации</p>
-                    </div>
+                    </Reveal>
 
-                    <div className="text-center">
+                    <Reveal className="text-center" delay={160}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <FileText className="w-6 h-6 text-cyan-600" />
                         </div>
                         <div className="mb-1">Сопровождение тендеров</div>
                         <p className="text-slate-600 text-sm">Помощь в оформлении документов</p>
-                    </div>
+                    </Reveal>
 
-                    <div className="text-center">
+                    <Reveal className="text-center" delay={240}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <CreditCard className="w-6 h-6 text-cyan-600" />
                         </div>
                         <div className="mb-1">Работа по договорам</div>
                         <p className="text-slate-600 text-sm">Безнал, отсрочка, гибкие условия</p>
-                    </div>
+                    </Reveal>
                 </div>
             </div>
         </section>

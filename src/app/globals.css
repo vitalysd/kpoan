@@ -58,3 +58,132 @@
     line-height: 1.5;
   }
 }
+
+@layer components {
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at top, rgba(23, 151, 165, 0.18), transparent 36%),
+      linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(2, 6, 23, 0.98));
+    transition:
+      opacity 650ms ease,
+      visibility 650ms ease;
+  }
+
+  .page-loader.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .page-loader.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .page-loader__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.9rem;
+    text-align: center;
+    color: white;
+  }
+
+  .page-loader__mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .page-loader__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-top-color: rgba(34, 211, 238, 0.95);
+    animation: loader-spin 1.1s linear infinite;
+  }
+
+  .page-loader__core {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #22d3ee, #1797a5);
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.35);
+    animation: loader-pulse 1.4s ease-in-out infinite;
+  }
+
+  .page-loader__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+  }
+
+  .page-loader__subtitle {
+    max-width: 20rem;
+    font-size: 0.875rem;
+    color: rgba(226, 232, 240, 0.8);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, var(--reveal-distance, 36px), 0) scale(0.985);
+    transition:
+      opacity 820ms ease,
+      transform 820ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loader-pulse {
+  0%,
+  100% {
+    transform: scale(0.92);
+    opacity: 0.82;
+  }
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-loader,
+  .page-loader.is-visible,
+  .page-loader.is-hidden {
+    transition: none;
+  }
+
+  .page-loader__ring,
+  .page-loader__core {
+    animation: none;
+  }
+
+  .reveal,
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

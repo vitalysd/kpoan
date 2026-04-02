@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { PageLoader } from "@/components/page-loader";
+import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 
 
 export const metadata: Metadata = {
@@ -60,8 +62,10 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body>
+        <PageLoader />
         <Header />
         {children}
+        <ScrollToTopButton />
         <Footer />
       </body>
     </html>

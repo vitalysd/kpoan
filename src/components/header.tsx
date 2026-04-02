@@ -6,6 +6,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+type MenuItem = {
+    label: string;
+    href: string;
+    id?: string;
+};
+
 const menuItems = [
     { label: 'Главная', href: '/' },
     { label: 'Каталог', href: '/catalog' },
@@ -13,10 +19,10 @@ const menuItems = [
     { label: 'Преимущества', id: 'advantages', href: '/#advantages' },
     { label: 'Ассортимент', id: 'assortment', href: '/#assortment' },
     { label: 'Контакты', id: 'contacts', href: '/#contacts' },
-] as const;
+] satisfies readonly MenuItem[];
 
 const sectionIds = menuItems
-    .filter((item) => item.id)
+    .filter((item): item is MenuItem & { id: string } => typeof item.id === "string")
     .map((item) => item.id);
 
 const topSectionIds = ['hero', 'categories'];
@@ -130,7 +136,7 @@ export function Header() {
         setIsMobileMenuOpen(false);
     };
 
-    const isItemActive = (item: typeof menuItems[number]) => {
+    const isItemActive = (item: MenuItem) => {
         if (item.id) {
             return isHomePage && activeSection === item.id;
         }

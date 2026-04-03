@@ -1,12 +1,13 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send, Upload, MessageCircle, X } from "lucide-react";
 import { IoLogoWhatsapp } from "react-icons/io5";
 import { FaTelegramPlane } from "react-icons/fa";
 import { Reveal } from "@/components/reveal";
+import { privacySections } from "@/data/privacy-policy";
 
 const formSchema = z.object({
     name: z.string().min(2, "Укажите ваше имя (минимум 2 символа)"),
@@ -69,6 +70,7 @@ export function Footer() {
         "idle" | "loading" | "success" | "error"
     >("idle");
     const [errorMessage, setErrorMessage] = useState("");
+    const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
     const selectedFile = watch("file");
 
@@ -105,9 +107,38 @@ export function Footer() {
         }
     };
 
+    const openPrivacy = () => {
+        setIsPrivacyOpen(true);
+        document.body.style.overflow = "hidden";
+    };
+
+    const closePrivacy = () => {
+        setIsPrivacyOpen(false);
+        document.body.style.overflow = "";
+    };
+
+    useEffect(() => {
+        if (!isPrivacyOpen) {
+            return;
+        }
+
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                closePrivacy();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [isPrivacyOpen]);
+
     return (
-        <section id="contacts" className="bg-slate-900">
-            <div className="container mx-auto px-4 lg:px-8">
+        <>
+            <section id="contacts" className="bg-slate-900">
+                <div className="container mx-auto px-4 lg:px-8">
                 {/* Main CTA Section */}
                 <div className="py-20 border-b border-slate-800">
                     <div className="grid lg:grid-cols-2 gap-12">
@@ -285,7 +316,14 @@ export function Footer() {
                                 )}
 
                                 <p className="text-slate-500 text-xs">
-                                    Нажимая кнопку, вы соглашаетесь с политикой обработки персональных данных
+                                    Нажимая кнопку, вы соглашаетесь с{" "}
+                                    <button
+                                        type="button"
+                                        onClick={openPrivacy}
+                                        className="cursor-pointer text-slate-300 underline underline-offset-2 transition-colors hover:text-white"
+                                    >
+                                        политикой обработки персональных данных
+                                    </button>
                                 </p>
                             </form>
                         </Reveal>
@@ -367,12 +405,79 @@ export function Footer() {
                             <p>© 2026 ООО «КПОАН». Все права защищены.</p>
                         </div>
                         <div className="flex gap-6">
-                            <a href="#" className="hover:text-white transition-colors">Политика конфиденциальности</a>
+                            <button
+                                type="button"
+                                onClick={openPrivacy}
+                                className="cursor-pointer hover:text-white transition-colors"
+                            >
+                                Политика конфиденциальности
+                            </button>
                             <a href="#" className="hover:text-white transition-colors">Реквизиты</a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+                </div>
+            </section>
+
+            {isPrivacyOpen && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
+                    onClick={closePrivacy}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label="Политика конфиденциальности"
+                >
+                    <div
+                        className="relative max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
+                        onClick={(event) => event.stopPropagation()}
+                    >
+                        <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5">
+                            <div>
+                                <h3 className="text-slate-900">Политика обработки персональных данных</h3>
+                                <p className="mt-2 text-sm text-slate-500">
+                                    Актуальная редакция для сайта ООО «КПОАН»
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={closePrivacy}
+                                className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900"
+                                aria-label="Закрыть"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <div className="max-h-[calc(90vh-88px)] space-y-6 overflow-y-auto px-6 py-6 text-sm leading-6 text-slate-700">
+                            <p>
+                                Настоящая политика применяется к данным, получаемым через формы обратной связи и иные
+                                средства взаимодействия на сайте. Документ подготовлен с учетом требований Федерального
+                                закона от 27 июля 2006 года № 152-ФЗ «О персональных данных».
+                            </p>
+
+                            {privacySections.map((section) => (
+                                <div key={section.title}>
+                                    <h4 className="mb-2 text-base font-semibold text-slate-900">{section.title}</h4>
+                                    <ul className="space-y-2">
+                                        {section.items.map((item) => (
+                                            <li key={item} className="flex gap-3">
+                                                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-600" />
+                                                <span>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+
+                            <p className="rounded-lg bg-slate-50 p-4 text-slate-600">
+                                По запросу пользователя ООО «КПОАН» предоставляет сведения, предусмотренные
+                                законодательством РФ о персональных данных, а также рассматривает обращения об
+                                уточнении, блокировании, уничтожении данных и отзыве согласия на их обработку.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

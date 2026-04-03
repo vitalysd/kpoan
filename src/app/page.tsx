@@ -1,4 +1,5 @@
 import {Hero} from "@/components/hero";
+import {CertificateCarousel} from "@/components/certificate-carousel";
 import {Categories} from "@/components/categories";
 import {About} from "@/components/about";
 import {Advantages} from "@/components/advantages";
@@ -11,6 +12,7 @@ export default function Home() {
   return (
     <main className="main-container">
       <Hero />
+      <CertificateCarousel />
       <Categories />
       <About />
       <Advantages />

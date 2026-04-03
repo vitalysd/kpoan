@@ -147,6 +147,63 @@
     opacity: 1;
     transform: translate3d(0, 0, 0) scale(1);
   }
+
+  .certificate-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    padding: 1.25rem 0;
+    box-shadow: 0 24px 60px rgba(148, 163, 184, 0.18);
+  }
+
+  .certificate-carousel__track {
+    display: flex;
+    width: max-content;
+    gap: 1rem;
+    padding: 0 1rem;
+    animation: certificate-scroll 28s linear infinite;
+  }
+
+  .certificate-carousel__card {
+    position: relative;
+    width: min(72vw, 17rem);
+    flex: 0 0 auto;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(226, 232, 240, 0.95);
+    background: white;
+    padding: 0.5rem;
+    box-shadow: 0 18px 36px rgba(148, 163, 184, 0.22);
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .certificate-carousel__card:hover {
+    transform: scale(1.03);
+    border-color: rgba(34, 211, 238, 0.55);
+    box-shadow: 0 24px 48px rgba(14, 165, 233, 0.18);
+  }
+
+  .certificate-carousel__fade-left,
+  .certificate-carousel__fade-right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 4.5rem;
+    pointer-events: none;
+  }
+
+  .certificate-carousel__fade-left {
+    left: 0;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.98), transparent);
+  }
+
+  .certificate-carousel__fade-right {
+    right: 0;
+    background: linear-gradient(270deg, rgba(255, 255, 255, 0.98), transparent);
+  }
 }
 
 @keyframes loader-spin {
@@ -168,6 +225,16 @@
   }
 }
 
+@keyframes certificate-scroll {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .page-loader,
   .page-loader.is-visible,
@@ -185,5 +252,9 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+
+  .certificate-carousel__track {
+    animation: none;
   }
 }

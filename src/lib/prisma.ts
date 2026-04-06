@@ -5,15 +5,15 @@ const databaseUrl =
   process.env.PRISMA_DATABASE_URL ??
   process.env.POSTGRES_URL;
 
-if (!databaseUrl) {
-  throw new Error(
-    "DATABASE_URL, PRISMA_DATABASE_URL или POSTGRES_URL должен быть установлен",
-  );
-}
-
 const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };
+
+if (!databaseUrl && process.env.NODE_ENV === "development") {
+  console.warn(
+    "DATABASE_URL не установлен. Установите DATABASE_URL, PRISMA_DATABASE_URL или POSTGRES_URL.",
+  );
+}
 
 export const prisma =
   globalForPrisma.prisma ??

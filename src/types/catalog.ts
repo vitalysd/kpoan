@@ -30,7 +30,7 @@ export type PrismaProductCharacteristic = {
 export type PrismaProduct = {
   id: string;
   slug: string;
-  sku: string;
+  sku: string | null;
   name: string;
   shortDescription: string | null;
   description: string | null;
@@ -53,17 +53,12 @@ export type PrismaProduct = {
 
 export type CatalogCategory = PrismaCategory & {
   icon: LucideIcon;
-  subcategories?: Array<{
-    slug: string;
-    name: string;
-  }>;
 };
 
 export type CatalogProduct = PrismaProduct;
 
 export type CatalogSearchState = {
   category?: string;
-  subcategory: string[];
   page: number;
 };
 

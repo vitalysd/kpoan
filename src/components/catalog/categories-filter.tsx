@@ -9,7 +9,7 @@ type CategoriesFilterProps = {
 };
 
 export function CategoriesFilter({ options }: CategoriesFilterProps) {
-  const { searchParams, setManyValues } = useCatalogQuery();
+  const { searchParams, setSingleValue } = useCatalogQuery();
   const active = searchParams.get("category") ?? "";
 
   return (
@@ -22,12 +22,7 @@ export function CategoriesFilter({ options }: CategoriesFilterProps) {
             <button
               key={option.slug}
               type="button"
-              onClick={() =>
-                setManyValues({
-                  category: isActive ? null : option.slug,
-                  subcategory: option.slug === "instrument" ? searchParams.get("subcategory") : null,
-                })
-              }
+              onClick={() => setSingleValue("category", isActive ? null : option.slug)}
               className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
                 isActive
                   ? "border-cyan-600 bg-cyan-600 text-white"

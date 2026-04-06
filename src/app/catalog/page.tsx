@@ -3,14 +3,12 @@ import { CatalogFilters } from "@/components/catalog/catalog-filters";
 import { CatalogPagination } from "@/components/catalog/catalog-pagination";
 import { ProductCard } from "@/components/catalog/product-card";
 import { Reveal } from "@/components/reveal";
-import { SubcategoriesFilter } from "@/components/catalog/subcategories-filter";
-import { catalogCategories } from "@/data/catalog";
 import { getCatalogPageData } from "@/lib/catalog";
 
 export const metadata: Metadata = {
   title: "Каталог инструментов | ООО «КПОАН»",
   description:
-    "Каталог товаров ООО «КПОАН»: фильтры, сортировка, карточки товаров и структура, готовая к подключению Prisma и PostgreSQL.",
+    "Каталог товаров ООО «КПОАН» с фильтрацией и данными из PostgreSQL через Prisma.",
 };
 
 type CatalogPageProps = {
@@ -19,9 +17,7 @@ type CatalogPageProps = {
 
 export default async function CatalogRoute({ searchParams }: CatalogPageProps) {
   const resolvedSearchParams = await searchParams;
-  const data = getCatalogPageData(resolvedSearchParams);
-  const instrumentCategory = catalogCategories.find((category) => category.slug === "instrument");
-  const showInstrumentSubcategories = data.state.category === "instrument";
+  const data = await getCatalogPageData(resolvedSearchParams);
 
   return (
     <main className="bg-slate-950">
@@ -35,14 +31,8 @@ export default async function CatalogRoute({ searchParams }: CatalogPageProps) {
                 <div className="text-lg text-slate-900">Найдено {data.totalItems} товаров</div>
               </Reveal>
 
-              {showInstrumentSubcategories && instrumentCategory?.subcategories?.length ? (
-                <Reveal delay={80}>
-                  <SubcategoriesFilter options={instrumentCategory.subcategories} />
-                </Reveal>
-              ) : null}
-
               {data.items.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                <div className="space-y-4">
                   {data.items.map((product, index) => (
                     <Reveal key={product.id} delay={index * 45}>
                       <ProductCard product={product} />

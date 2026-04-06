@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.gitignore
+.idea
+.vscode
+.qwen
+.env.local
+.env*.local
+*.md
+Dockerfile
+docker-compose.yml
+prisma.config.ts
+vercel.json

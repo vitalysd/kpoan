@@ -1,21 +1,13 @@
-"use client";
-
 import { FileText, Upload, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 
 export function Hero() {
-  const scrollToContacts = () => {
-    const contactsSection = document.getElementById("contacts");
-    contactsSection?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
     <section
       id="hero"
       className="relative bg-slate-900 pt-24 md:pt-28 pb-12 md:pb-20 overflow-hidden"
     >
-      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"
@@ -29,7 +21,6 @@ export function Hero() {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-          {/* Left Column - Content */}
           <Reveal>
             <h1 className="text-white mb-4 md:mb-6 text-2xl md:text-4xl lg:text-5xl">
               Комплексные поставки промышленного оборудования по всей России
@@ -39,28 +30,26 @@ export function Hero() {
               спецификацию. Работа с тендерами и госзакупками.
             </p>
 
-            {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mb-8 md:mb-12">
-              <button
-                onClick={scrollToContacts}
-                className="cursor-pointer bg-cyan-500 hover:bg-cyan-700 text-white px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
+              <a
+                href="/#contacts"
+                className="bg-cyan-500 hover:bg-cyan-700 text-white px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <FileText className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="hidden sm:inline">
                   Запросить коммерческое предложение
                 </span>
                 <span className="sm:hidden">Запросить КП</span>
-              </button>
-              <button
-                onClick={scrollToContacts}
-                className="cursor-pointer border-2 border-white text-white hover:bg-white hover:text-slate-900 px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
+              </a>
+              <a
+                href="/#contacts"
+                className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <Upload className="w-4 h-4 md:w-5 md:h-5" />
                 Отправить спецификацию
-              </button>
+              </a>
             </div>
 
-            {/* Trust Bar */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 text-slate-300 border-t border-slate-700 pt-4 md:pt-6">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-cyan-500 shrink-0" />
@@ -79,7 +68,6 @@ export function Hero() {
             </div>
           </Reveal>
 
-          {/* Right Column - Image/Map */}
           <Reveal className="relative" delay={120}>
             <div className="relative rounded-lg overflow-hidden shadow-2xl">
               <Image
@@ -89,8 +77,7 @@ export function Hero() {
                 height={500}
                 alt="Поставки оборудования"
               />
-              {/* Overlay with regions highlight */}
-              <div className="absolute inset-0 bg-gradien-to-t from-slate-900 via-slate-900/50 to-transparent">
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent">
                 <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6">
                   <div className="bg-white/10 backdrop-blur-sm rounded-lg p-3 md:p-4 border border-white/20">
                     <div className="text-white mb-2 text-sm md:text-base">

@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 
-export type PrismaCategory = {
+export type CategoryDTO = {
   id: string;
   slug: string;
   name: string;
@@ -10,7 +10,7 @@ export type PrismaCategory = {
   updatedAt: string;
 };
 
-export type PrismaBrand = {
+export type BrandDTO = {
   id: string;
   slug: string;
   name: string;
@@ -19,7 +19,7 @@ export type PrismaBrand = {
   updatedAt: string;
 };
 
-export type PrismaProductCharacteristic = {
+export type ProductCharacteristicDTO = {
   id: string;
   productId: string;
   name: string;
@@ -27,7 +27,7 @@ export type PrismaProductCharacteristic = {
   createdAt: string;
 };
 
-export type PrismaProduct = {
+export type ProductDTO = {
   id: string;
   slug: string;
   sku: string | null;
@@ -46,20 +46,44 @@ export type PrismaProduct = {
   updatedAt: string;
   brandId: string;
   categoryId: string;
-  brand: PrismaBrand;
-  category: PrismaCategory;
-  characteristics: PrismaProductCharacteristic[];
+  brand: BrandDTO;
+  category: CategoryDTO;
+  characteristics: ProductCharacteristicDTO[];
 };
 
-export type CatalogCategory = PrismaCategory & {
+// Aliases для обратной совместимости
+/** @deprecated Используйте CategoryDTO */
+export type PrismaCategory = CategoryDTO;
+/** @deprecated Используйте BrandDTO */
+export type PrismaBrand = BrandDTO;
+/** @deprecated Используйте ProductCharacteristicDTO */
+export type PrismaProductCharacteristic = ProductCharacteristicDTO;
+/** @deprecated Используйте ProductDTO */
+export type PrismaProduct = ProductDTO;
+
+export type CatalogCategory = CategoryDTO & {
   icon: LucideIcon;
 };
 
-export type CatalogProduct = PrismaProduct;
+export type CatalogProduct = ProductDTO;
 
-export type CatalogSearchState = {
+export type CatalogFilters = {
   category?: string;
+  brand?: string;
+};
+
+export type CatalogSearchState = CatalogFilters & {
   page: number;
+};
+
+export type CatalogPageData = {
+  state: CatalogSearchState;
+  items: CatalogProduct[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  categories: FilterOption[];
+  brands: FilterOption[];
 };
 
 export type FilterOption = {

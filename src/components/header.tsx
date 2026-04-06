@@ -41,8 +41,8 @@ export function Header() {
             setIsScrolled(window.scrollY > 20);
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     // Close mobile menu when clicking outside
@@ -103,7 +103,10 @@ export function Header() {
                     .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
                 if (visibleSections.length > 0) {
-                    setActiveSection(visibleSections[0].target.id);
+                    const first = visibleSections[0];
+                    if (first) {
+                        setActiveSection(first.target.id);
+                    }
                     return;
                 }
 

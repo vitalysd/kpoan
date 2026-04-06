@@ -1,5 +1,3 @@
-"use client";
-
 import { Award, MapPin, Handshake, Shield, Package, ClipboardCheck, FileText, CreditCard } from 'lucide-react';
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";

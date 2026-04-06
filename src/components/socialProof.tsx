@@ -1,5 +1,3 @@
-"use client";
-
 import { Building2, Factory, Warehouse, TrendingUp } from 'lucide-react';
 import { Reveal } from "@/components/reveal";
 
@@ -37,12 +35,11 @@ export function SocialProof() {
                     </p>
                 </Reveal>
 
-                {/* Client Types */}
                 <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
                     {clientTypes.map((type, index) => {
                         const Icon = type.icon;
                         return (
-                            <Reveal key={index} delay={index * 70} className="text-center p-6 bg-slate-50 rounded-lg">
+                            <Reveal key={type.title} delay={index * 70} className="text-center p-6 bg-slate-50 rounded-lg">
                                 <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm">
                                     <Icon className="w-7 h-7 text-cyan-600" />
                                 </div>

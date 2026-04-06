@@ -39,7 +39,9 @@ export function Reveal({
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
+      (entries) => {
+        const entry = entries[0];
+        if (!entry) return;
         if (entry.isIntersecting) {
           timeoutId = setTimeout(() => {
             setIsVisible(true);

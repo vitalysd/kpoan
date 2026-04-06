@@ -5,26 +5,56 @@ import { ProductCard } from "@/components/catalog/product-card";
 import { Reveal } from "@/components/reveal";
 import { getCatalogPageData } from "@/lib/catalog";
 
-export const metadata: Metadata = {
-  title: "Каталог инструментов | ООО «КПОАН»",
-  description:
-    "Каталог товаров ООО «КПОАН» с фильтрацией и данными из PostgreSQL через Prisma.",
-};
-
 type CatalogPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-export default async function CatalogRoute({ searchParams }: CatalogPageProps) {
-  const resolvedSearchParams = await searchParams;
-  const data = await getCatalogPageData(resolvedSearchParams);
+export async function generateMetadata({
+  searchParams,
+}: CatalogPageProps): Promise<Metadata> {
+  const resolved = await searchParams;
+  const category = Array.isArray(resolved.category)
+    ? resolved.category[0]
+    : resolved.category;
+  const brand = Array.isArray(resolved.brand)
+    ? resolved.brand[0]
+    : resolved.brand;
+
+  let title = "Каталог | ООО «КПОАН»";
+  if (category && brand) {
+    title = `${category} — ${brand} | Каталог | ООО «КПОАН»`;
+  } else if (category) {
+    title = `${category} | Каталог | ООО «КПОАН»`;
+  } else if (brand) {
+    title = `${brand} | Каталог | ООО «КПОАН»`;
+  }
+
+  return {
+    title,
+    description:
+      "Каталог товаров ООО «КПОАН» с фильтрацией по категориям и брендам.",
+  };
+}
+
+export default function CatalogRoute({ searchParams }: CatalogPageProps) {
+  return (
+    <CatalogRouteInner searchParams={searchParams} />
+  );
+}
+
+async function CatalogRouteInner({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const data = await getCatalogPageData(await searchParams);
 
   return (
     <main className="bg-slate-950">
       <section className="bg-slate-50 pt-24 pb-10 md:pt-28 md:pb-14">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
-            <CatalogFilters categories={data.categories} />
+            <CatalogFilters categories={data.categories} brands={data.brands} />
 
             <div className="space-y-6">
               <Reveal className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">

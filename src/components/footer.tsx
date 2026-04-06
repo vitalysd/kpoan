@@ -412,7 +412,13 @@ export function Footer() {
                             >
                                 Политика конфиденциальности
                             </button>
-                            <a href="#" className="hover:text-white transition-colors">Реквизиты</a>
+                            <button
+                                type="button"
+                                onClick={() => alert("Раздел «Реквизиты» в разработке")}
+                                className="cursor-pointer text-left hover:text-white transition-colors"
+                            >
+                                Реквизиты
+                            </button>
                         </div>
                     </div>
                 </div>

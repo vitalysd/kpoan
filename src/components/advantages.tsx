@@ -1,5 +1,3 @@
-"use client";
-
 import { Package2, DollarSign, Clock, Headphones, FileCheck } from 'lucide-react';
 import { Reveal } from "@/components/reveal";
 
@@ -47,7 +45,7 @@ export function Advantages() {
                         const Icon = advantage.icon;
                         return (
                             <Reveal
-                                key={index}
+                                key={advantage.title}
                                 delay={index * 70}
                                 className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                             >

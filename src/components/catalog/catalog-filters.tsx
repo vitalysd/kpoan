@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
+import { BrandsFilter } from "@/components/catalog/brands-filter";
 import { CategoriesFilter } from "@/components/catalog/categories-filter";
 import { useCatalogQuery } from "@/components/catalog/use-catalog-query";
 import type { FilterOption } from "@/types/catalog";
 
 type CatalogFiltersProps = {
   categories: FilterOption[];
+  brands: FilterOption[];
 };
 
-function FiltersContent({ categories }: CatalogFiltersProps) {
+function FiltersContent({ categories, brands }: CatalogFiltersProps) {
   const { clearAll } = useCatalogQuery();
 
   return (
@@ -28,6 +30,7 @@ function FiltersContent({ categories }: CatalogFiltersProps) {
         </button>
       </div>
       <CategoriesFilter options={categories} />
+      <BrandsFilter options={brands} />
     </div>
   );
 }
@@ -62,7 +65,7 @@ export function CatalogFilters(props: CatalogFiltersProps) {
             <div className="mb-4 flex items-center justify-between rounded-2xl bg-slate-900 px-4 py-4 text-white">
               <div>
                 <div className="text-base">Фильтры каталога</div>
-                <div className="text-sm text-slate-300">Категории товаров</div>
+                <div className="text-sm text-slate-300">Категории и бренды товаров</div>
               </div>
               <button
                 type="button"

@@ -32,5 +32,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "src/data/catalog.ts"]
+  "exclude": ["node_modules", "src/data/catalog.ts", "prisma"]
 }

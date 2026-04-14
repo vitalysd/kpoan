@@ -8,6 +8,10 @@ console.log("Листы:", wb.SheetNames);
 // Проверяем все листы
 for (const sheetName of wb.SheetNames) {
   const ws = wb.Sheets[sheetName];
+  if (!ws) {
+    console.log(`Лист "${sheetName}" не найден или пуст.`);
+    continue;
+  }
   const data = XLSX.utils.sheet_to_json(ws, { header: 1 }) as any[][];
 
   console.log(`\n=== Лист: ${sheetName} ===`);

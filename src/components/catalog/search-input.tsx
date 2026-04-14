@@ -11,7 +11,7 @@ export function SearchInput() {
   const initialValue = searchParams.get("q") ?? "";
   const [value, setValue] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(!!initialValue);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {

@@ -29,11 +29,11 @@ const steps = [
 ];
 
 const deliveryRegions = [
-    { region: 'Москва и МО', time: '1-2 дня', icon: '🏢' },
-    { region: 'Санкт-Петербург', time: '2-3 дня', icon: '🏛️' },
-    { region: 'Центральная Россия', time: '3-5 дней', icon: '🚛' },
-    { region: 'Урал и Сибирь', time: '5-7 дней', icon: '🚂' },
-    { region: 'Дальний Восток', time: '7-10 дней', icon: '✈️' }
+    { region: 'Москва и МО', time: '1-2 дня', icon: '🏢', iconLabel: 'Москва' },
+    { region: 'Санкт-Петербург', time: '2-3 дня', icon: '🏛️', iconLabel: 'Санкт-Петербург' },
+    { region: 'Центральная Россия', time: '3-5 дней', icon: '🚛', iconLabel: 'Доставка грузовиком' },
+    { region: 'Урал и Сибирь', time: '5-7 дней', icon: '🚂', iconLabel: 'Доставка поездом' },
+    { region: 'Дальний Восток', time: '7-10 дней', icon: '✈️', iconLabel: 'Доставка самолётом' }
 ];
 
 export function WorkProcess() {
@@ -85,7 +85,8 @@ export function WorkProcess() {
 
                         <div className="relative bg-slate-50 rounded-lg p-8 mb-6 min-h-[300px] flex items-center justify-center">
                             <div className="text-center">
-                                <div className="text-6xl mb-4">🗺️</div>
+                                <div className="text-6xl mb-4" aria-hidden="true">🗺️</div>
+                                <p className="sr-only">Карта России — доставка по всей стране</p>
                                 <p className="text-slate-600">
                                     Работаем со всеми транспортными компаниями
                                 </p>
@@ -100,7 +101,8 @@ export function WorkProcess() {
                             {deliveryRegions.map((item) => (
                                 <div key={item.region} className="flex items-center justify-between p-3 bg-slate-50 rounded">
                                     <div className="flex items-center gap-3">
-                                        <span className="text-2xl">{item.icon}</span>
+                                        <span className="text-2xl" aria-hidden="true">{item.icon}</span>
+                                        <span className="sr-only">{item.iconLabel}</span>
                                         <span className="text-slate-700">{item.region}</span>
                                     </div>
                                     <span className="text-cyan-600">{item.time}</span>

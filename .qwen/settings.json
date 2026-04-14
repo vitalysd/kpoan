@@ -6,7 +6,16 @@
       "Bash(type *)",
       "Bash(rmdir *)",
       "Bash(taskkill *)",
-      "Bash(timeout *)"
+      "Bash(timeout *)",
+      "Bash(del *)",
+      "Bash(do *)",
+      "Bash(copy *)",
+      "Bash(dir *)",
+      "Bash(findstr *)",
+      "Bash(where *)",
+      "Bash(python *)",
+      "Bash(py *)",
+      "Bash(more.com)"
     ]
   },
   "$version": 3

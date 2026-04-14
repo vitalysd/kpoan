@@ -9,6 +9,14 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { Reveal } from "@/components/reveal";
 import { privacySections } from "@/data/privacy-policy";
 
+const ALLOWED_EXTENSIONS = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
+
 const formSchema = z.object({
     name: z.string().min(2, "Укажите ваше имя (минимум 2 символа)"),
     company: z.string().min(2, "Укажите название компании"),
@@ -30,13 +38,8 @@ const formSchema = z.object({
         .refine(
             (file) =>
                 !file ||
-                [
-                    "application/pdf",
-                    "application/msword",
-                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                    "application/vnd.ms-excel",
-                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                ].includes(file.type),
+                ALLOWED_EXTENSIONS.includes(file.type) ||
+                /\.(pdf|doc|docx|xls|xlsx)$/i.test(file.name),
             { message: "Разрешены только: PDF, Word, Excel" }
         ),
 });
@@ -87,6 +90,8 @@ export function Footer() {
             formData.append("email", data.email);
             if (data.message) formData.append("message", data.message);
             if (data.file) formData.append("file", data.file);
+            // Honeypot — скрытое поле для защиты от ботов/CSRF
+            formData.append("website", "");
 
             const response = await fetch("/api/send-email", {
                 method: "POST",
@@ -151,7 +156,7 @@ export function Footer() {
                                 Заполните форму, и наш специалист свяжется с вами в течение 30 минут в рабочее время
                             </p>
 
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" aria-label="Форма обратной связи">
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-slate-300 text-sm mb-2">

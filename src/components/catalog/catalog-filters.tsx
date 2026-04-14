@@ -40,25 +40,28 @@ export function CatalogFilters(props: CatalogFiltersProps) {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm lg:hidden"
-      >
-        <SlidersHorizontal className="h-4 w-4" />
-        Фильтры
-      </button>
-
-      <aside className="hidden lg:block">
+      <div className="lg:hidden">
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm"
+        >
+          <SlidersHorizontal className="h-4 w-4" />
+          Фильтры
+        </button>
+      </div>
+      <div className="hidden lg:block">
         <FiltersContent {...props} />
-      </aside>
+      </div>
 
       {isOpen && (
         <div className="fixed inset-0 z-[60] lg:hidden">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-slate-950/60"
+            onKeyDown={(e) => { if (e.key === 'Escape') setIsOpen(false); }}
+            className="absolute inset-0 bg-slate-950/60 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
             aria-label="Закрыть фильтры"
           />
           <div className="absolute left-0 top-0 h-full w-[88vw] max-w-sm overflow-y-auto bg-slate-50 p-4 shadow-2xl">

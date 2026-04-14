@@ -3,7 +3,7 @@ import { defineConfig, env } from "prisma/config";
 
 loadEnv({ path: ".env.local" });
 
-process.env.DATABASE_URL ??= process.env.PRISMA_DATABASE_URL ?? process.env.POSTGRES_URL;
+process.env.PRISMA_DATABASE_URL ??= process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -12,6 +12,6 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: env("PRISMA_DATABASE_URL"),
   },
 });

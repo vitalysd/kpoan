@@ -70,6 +70,7 @@ export type CatalogProduct = ProductDTO;
 export type CatalogFilters = {
   category?: string;
   brand?: string;
+  search?: string;
 };
 
 export type CatalogSearchState = CatalogFilters & {

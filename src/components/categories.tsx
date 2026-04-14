@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { getCatalogCategories } from "@/lib/catalog";
 
@@ -51,13 +52,11 @@ export async function Categories() {
                                 <div className="w-11 h-11 md:w-12 md:h-12 bg-slate-100 rounded-lg flex items-center justify-center mb-3 md:mb-4 group-hover:bg-cyan-500 transition-colors">
                                     <Icon className="w-5 h-5 md:w-6 md:h-6 text-slate-700 group-hover:text-white transition-colors" />
                                 </div>
-                                <h4 className="mb-2 text-sm md:text-base">{title}</h4>
+                                <h3 className="mb-2 text-sm md:text-base">{title}</h3>
                                 <p className="text-slate-600 text-xs md:text-sm mb-3 md:mb-4">{category.description}</p>
                                 <div className="flex items-center gap-2 text-cyan-500 group-hover:gap-3 transition-all">
                                     <span className="text-xs md:text-sm">Открыть каталог</span>
-                                    <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
+                                    <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
                                 </div>
                                 </Link>
                             </Reveal>

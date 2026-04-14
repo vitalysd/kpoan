@@ -76,6 +76,7 @@ export function Hero() {
                 width={500}
                 height={500}
                 alt="Поставки оборудования"
+                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent">
                 <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6 right-4 md:right-6">

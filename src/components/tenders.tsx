@@ -32,7 +32,7 @@ export function Tenders() {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSubmit2 = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('loading');
         setErrorMessage('');
@@ -48,6 +48,8 @@ export function Tenders() {
         if (formData.file) {
             data.append('file', formData.file);
         }
+        // Honeypot — скрытое поле для защиты от ботов/CSRF
+        data.append('website', '');
 
         try {
             const res = await fetch('/api/send-email', {
@@ -126,7 +128,7 @@ export function Tenders() {
                         <div className="p-8 lg:p-12">
                             <h3 className="mb-6">Сообщите о вашей закупке</h3>
 
-                            <form onSubmit={handleSubmit2} className="space-y-4">
+                            <form onSubmit={handleSubmit} className="space-y-4">
                                 <div className="grid md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-sm mb-2">Название компании *</label>

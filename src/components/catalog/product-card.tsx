@@ -14,7 +14,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <div className="mb-1 text-xs uppercase tracking-[0.18em] text-cyan-700">
             {product.brand.name}
           </div>
-          <h3 className="mb-1 text-lg text-slate-900">{product.name}</h3>
+          <h2 className="mb-1 text-lg text-slate-900">{product.name}</h2>
           <div className="mb-2 text-sm text-slate-500">{product.category.name}</div>
           <p className="text-sm leading-5 text-slate-600">{product.shortDescription}</p>
         </div>

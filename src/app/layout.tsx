@@ -7,12 +7,15 @@ import { ScrollToTopButton } from "@/components/scroll-to-top-button";
 
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kpoan.ru'),
   icons: {
     icon: '/favicon.ico'
   },
-  title: 'ООО «КПОАН»',
-  description: 'Комплексные поставки оборудования и инструмента',
+  title: {
+    default: 'ООО «КПОАН» — Комплексные поставки промышленного оборудования',
+    template: '%s | ООО «КПОАН»',
+  },
+  description: 'Комплексные поставки оборудования и инструмента. Прямые контракты с производителями. Индивидуальный подбор под спецификацию. Доставка по всей России.',
   keywords: ["поставка промышленного оборудования",
     "промышленное оборудование",
     "электроинструмент оптом",
@@ -33,21 +36,29 @@ export const metadata: Metadata = {
     "инструмент для строительства",
     "прямые поставки",
     "223-ФЗ закупки"],
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'ООО «КПОАН»',
+    title: 'ООО «КПОАН» — Комплексные поставки промышленного оборудования',
     description: 'Надежный поставщик промышленного оборудования и инструмента для предприятий, производств и строительных компаний по всей России.',
-    url: 'https://kpoan.ru',
     siteName: 'ООО «КПОАН»',
     images: [
       {
         url: '/hero.jpg',
         width: 1200,
         height: 630,
-        alt: 'Комплексные поставки оборудования и инструмента',
+        alt: 'Комплексные поставки промышленного оборудования — ООО «КПОАН»',
       },
     ],
     locale: 'ru_RU',
     type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'ООО «КПОАН» — Комплексные поставки промышленного оборудования',
+    description: 'Надежный поставщик промышленного оборудования и инструмента для предприятий, производств и строительных компаний по всей России.',
+    images: ['/hero.jpg'],
   },
   robots: {
     index: true,
@@ -60,8 +71,62 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "ООО «КПОАН»",
+    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://kpoan.ru",
+    "logo": `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kpoan.ru"}/logo.svg`,
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+7-908-094-21-06",
+      "email": "info@kpoan.ru",
+      "contactType": "sales",
+      "areaServed": "RU",
+      "availableLanguage": "Russian",
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Челябинск",
+      "streetAddress": "ул. Ласковая, д. 20",
+      "addressCountry": "RU",
+    },
+    "sameAs": [
+      "https://wa.me/79823218085",
+      "https://t.me/Alsu_Niz",
+    ],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ООО «КПОАН»",
+    "url": process.env.NEXT_PUBLIC_SITE_URL ?? "https://kpoan.ru",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kpoan.ru"}/catalog?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html lang="ru">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://wa.me" />
+        <link rel="dns-prefetch" href="https://t.me" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
+      </head>
       <body>
         <PageLoader />
         <Header />

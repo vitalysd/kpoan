@@ -231,6 +231,8 @@ export function Header() {
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="lg:hidden text-white p-2"
                             aria-label="Toggle menu"
+                            aria-expanded={isMobileMenuOpen}
+                            aria-controls="mobile-menu"
                         >
                             {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
@@ -239,7 +241,7 @@ export function Header() {
 
                 {/* Mobile Menu */}
                 {isMobileMenuOpen && (
-                    <nav className="lg:hidden bg-slate-800 rounded-lg mt-2 mb-4 py-4 px-4 shadow-xl animate-fadeIn">
+                    <nav id="mobile-menu" className="lg:hidden bg-slate-800 rounded-lg mt-2 mb-4 py-4 px-4 shadow-xl animate-fadeIn">
                         <div className="flex flex-col gap-3">
                             {menuItems.map((item) => {
                                 const isActive = isItemActive(item);

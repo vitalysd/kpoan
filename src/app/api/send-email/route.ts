@@ -53,22 +53,22 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#x27;');
 }
 
-// --- Валидация файла ---
-const ALLOWED_FILE_TYPES = [
-  'application/pdf',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-];
+// --- Валидация файла по расширению и размеру ---
+const ALLOWED_EXTENSIONS = new Set([
+  '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.jpg', '.jpeg', '.png', '.webp',
+]);
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
+function getFileExtension(filename: string): string {
+  const dotIndex = filename.lastIndexOf('.');
+  return dotIndex >= 0 ? filename.substring(dotIndex).toLowerCase() : '';
+}
+
 function validateFile(file: File): string | null {
-  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
-    return `Недопустимый тип файла: ${file.type || 'не определён'}. Разрешены: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, WEBP.`;
+  // Проверяем расширение, а не клиентский MIME-тип
+  const ext = getFileExtension(file.name);
+  if (!ALLOWED_EXTENSIONS.has(ext)) {
+    return `Недопустимый тип файла: ${ext || 'без расширения'}. Разрешены: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG, WEBP.`;
   }
   if (file.size > MAX_FILE_SIZE) {
     return `Файл слишком большой (${(file.size / 1024 / 1024).toFixed(1)} МБ). Максимум 10 МБ.`;
@@ -76,14 +76,21 @@ function validateFile(file: File): string | null {
   return null;
 }
 
-// --- Инициализация Resend с проверкой ---
-if (!process.env.RESEND_API_KEY) {
-  console.error('RESEND_API_KEY не установлен. Email-уведомления не будут работать.');
-}
+// --- Инициализация Resend ---
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
+    // Origin check — простая защита от CSRF
+    const origin = request.headers.get('origin');
+    const host = request.headers.get('host');
+    if (origin && host && !origin.includes(host)) {
+      return NextResponse.json(
+        { error: 'Запрос отклонён (origin mismatch)' },
+        { status: 403 },
+      );
+    }
+
     // Rate limiting
     const ip = getIpFromRequest(request);
     const limitCheck = checkRateLimit(ip);
@@ -120,6 +127,12 @@ export async function POST(request: Request) {
       );
     }
 
+    // Honeypot — CSRF-защита (скрытое поле)
+    const honeypot = formData.get('website') as string | null;
+    if (honeypot) {
+      return NextResponse.json({ success: true });
+    }
+
     // Валидация файла на сервере
     if (file && file.size > 0) {
       const fileError = validateFile(file);
@@ -136,6 +149,10 @@ export async function POST(request: Request) {
     const safeMessage = message ? escapeHtml(message) : '—';
     const safeFileName = file?.name ? escapeHtml(file.name) : null;
 
+    // Экранирование subject (на случай если email-провайдер рендерит HTML)
+    const safeSubjectName = escapeHtml(name);
+    const safeSubjectCompany = escapeHtml(company);
+
     const attachments =
       file && file.size > 0
         ? [
@@ -149,7 +166,7 @@ export async function POST(request: Request) {
     await resend.emails.send({
       from: 'Сайт <info@kpoan.ru>',
       to: ['info@kpoan.ru'],
-      subject: `Новая заявка от ${name} (${company})`,
+      subject: `Новая заявка от ${safeSubjectName} (${safeSubjectCompany})`,
       html: `
         <h2>Новая заявка с сайта</h2>
         <p><strong>Имя:</strong> ${safeName}</p>
@@ -164,7 +181,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Ошибка отправки email:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Ошибка отправки email:', error);
+    }
     return NextResponse.json(
       { error: 'Ошибка отправки. Попробуйте позже.' },
       { status: 500 },

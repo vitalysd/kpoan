@@ -73,13 +73,17 @@ export const parseCatalogSearchParams = (
   const rawBrand = Array.isArray(searchParams.brand)
     ? searchParams.brand[0]
     : searchParams.brand;
+  const rawSearch = Array.isArray(searchParams.q)
+    ? searchParams.q[0]
+    : searchParams.q;
   const parsedPage = rawPage ? Number(rawPage) : 1;
   const page = Number.isFinite(parsedPage) ? parsedPage : 1;
 
   return {
     category: rawCategory || undefined,
     brand: rawBrand || undefined,
-    page: page > 0 ? Math.floor(page) : 1,
+    search: rawSearch || undefined,
+    page: page > 0 ? Math.round(page) : 1,
   };
 };
 
@@ -163,6 +167,20 @@ const _getCatalogPageData = async (
   if (state.brand) {
     where.brand = { slug: state.brand };
   }
+  if (state.search) {
+    where.OR = [
+      { name: { contains: state.search, mode: "insensitive" } },
+      { sku: { contains: state.search, mode: "insensitive" } },
+      { shortDescription: { contains: state.search, mode: "insensitive" } },
+      {
+        characteristics: {
+          some: {
+            value: { contains: state.search, mode: "insensitive" },
+          },
+        },
+      },
+    ];
+  }
 
   const hasFilters = Object.keys(where).length > 0;
   const totalItems = await prisma.product.count({
@@ -238,12 +256,33 @@ const _getCatalogPageData = async (
 /**
  * Кэшированная версия получения данных каталога.
  * Кэш обновляется каждые 1 час.
+ * Cache key включает searchParams, чтобы разные фильтры
+ * не получали чужой кэш.
  */
-export const getCatalogPageData = unstable_cache(
-  _getCatalogPageData,
-  ["catalog-page"],
-  { revalidate: 3600, tags: ["catalog"] },
-);
+const createCacheKey = (
+  searchParams: Record<string, string | string[] | undefined>,
+): string => {
+  const parts: string[] = [];
+  const keys = Object.keys(searchParams).sort();
+  for (const key of keys) {
+    const val = searchParams[key];
+    if (val) {
+      parts.push(`${key}=${Array.isArray(val) ? val.join(",") : val}`);
+    }
+  }
+  return parts.length > 0 ? parts.join("&") : "no-filters";
+};
+
+export const getCatalogPageData = async (
+  searchParams: Record<string, string | string[] | undefined>,
+) => {
+  const cacheKey = createCacheKey(searchParams);
+  const cachedFn = unstable_cache(_getCatalogPageData, [`catalog-${cacheKey}`], {
+    revalidate: 3600,
+    tags: ["catalog"],
+  });
+  return cachedFn(searchParams);
+};
 
 export const createCatalogQueryString = (
   state: Partial<CatalogSearchState> & { page?: number },
@@ -252,6 +291,7 @@ export const createCatalogQueryString = (
 
   if (state.category) params.set("category", state.category);
   if (state.brand) params.set("brand", state.brand);
+  if (state.search) params.set("q", state.search);
   if (state.page && state.page > 1) params.set("page", String(state.page));
 
   return params.toString();

@@ -7,7 +7,7 @@ import { Reveal } from "@/components/reveal";
 
 const AUTO_SCROLL_SPEED = 36;
 
-const certificates = Array.from({ length: 13 }, (_, index) => ({
+const certificates = Array.from({ length: 12 }, (_, index) => ({
   id: index + 1,
   src: `/certificate_${index + 1}.jpg`,
   alt: `Сертификат ${index + 1}`,

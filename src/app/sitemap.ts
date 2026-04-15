@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { prisma } from '@/lib/prisma';
+import { prisma, runWithPrismaRetry } from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kpoan.ru';
@@ -22,10 +22,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Динамические страницы каталога (по категориям)
   try {
-    const categories = await prisma.category.findMany({
-      select: { slug: true, updatedAt: true },
-      orderBy: { name: 'asc' },
-    });
+    const categories = await runWithPrismaRetry(
+      () =>
+        prisma.category.findMany({
+          select: { slug: true, updatedAt: true },
+          orderBy: { name: 'asc' },
+        }),
+      { label: 'Sitemap categories query' },
+    );
 
     for (const cat of categories) {
       routes.push({

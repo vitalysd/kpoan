@@ -1,5 +1,6 @@
 import { FileText, Upload, CheckCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { Reveal } from "@/components/reveal";
 
 export function Hero() {
@@ -31,7 +32,7 @@ export function Hero() {
             </p>
 
             <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 mb-8 md:mb-12">
-              <a
+              <Link
                 href="/#contacts"
                 className="bg-cyan-500 hover:bg-cyan-700 text-white px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
               >
@@ -40,14 +41,14 @@ export function Hero() {
                   Запросить коммерческое предложение
                 </span>
                 <span className="sm:hidden">Запросить КП</span>
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#contacts"
                 className="border-2 border-white text-white hover:bg-white hover:text-slate-900 px-5 py-3 md:px-8 md:py-4 rounded transition-colors flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 <Upload className="w-4 h-4 md:w-5 md:h-5" />
                 Отправить спецификацию
-              </a>
+              </Link>
             </div>
 
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 md:gap-6 text-slate-300 border-t border-slate-700 pt-4 md:pt-6">

@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 import { getCategoryIcon } from "@/lib/catalog-icons";
-import { prisma } from "@/lib/prisma";
+import { prisma, runWithPrismaRetry } from "@/lib/prisma";
 import type {
   CatalogCategory,
   CatalogPageData,
@@ -144,29 +144,35 @@ const mapProduct = (product: RawProduct): CatalogProduct => ({
 });
 
 export const getCatalogCategories = async (): Promise<CatalogCategory[]> => {
-  const categories = await prisma.category.findMany({
-    orderBy: { name: "asc" },
-  });
+  const categories = await runWithPrismaRetry(
+    () =>
+      prisma.category.findMany({
+        orderBy: { name: "asc" },
+      }),
+    { label: "Catalog categories query" },
+  );
 
   return categories.map(mapCategory);
 };
 
-/**
- * Внутренняя функция получения данных каталога.
- * Оборачивается в unstable_cache для кэширования.
- */
-const _getCatalogPageData = async (
-  searchParams: Record<string, string | string[] | undefined>,
-): Promise<CatalogPageData> => {
-  const state = parseCatalogSearchParams(searchParams);
-
+const buildCatalogWhere = (
+  state: CatalogSearchState,
+  options?: {
+    includeCategory?: boolean;
+    includeBrand?: boolean;
+  },
+): Record<string, unknown> | undefined => {
+  const { includeCategory = true, includeBrand = true } = options ?? {};
   const where: Record<string, unknown> = {};
-  if (state.category) {
+
+  if (includeCategory && state.category) {
     where.category = { slug: state.category };
   }
-  if (state.brand) {
+
+  if (includeBrand && state.brand) {
     where.brand = { slug: state.brand };
   }
+
   if (state.search) {
     where.OR = [
       { name: { contains: state.search, mode: "insensitive" } },
@@ -182,57 +188,79 @@ const _getCatalogPageData = async (
     ];
   }
 
-  const hasFilters = Object.keys(where).length > 0;
-  const totalItems = await prisma.product.count({
-    where: hasFilters ? where : undefined,
-  });
+  return Object.keys(where).length > 0 ? where : undefined;
+};
+
+/**
+ * Внутренняя функция получения данных каталога.
+ * Оборачивается в unstable_cache для кэширования.
+ */
+const _getCatalogPageData = async (
+  searchParams: Record<string, string | string[] | undefined>,
+): Promise<CatalogPageData> => {
+  const state = parseCatalogSearchParams(searchParams);
+  const productsWhere = buildCatalogWhere(state);
+  const brandsCountWhere = buildCatalogWhere(state, { includeBrand: false });
+  const categoriesCountWhere = buildCatalogWhere(state, { includeCategory: false });
+
+  const totalItems = await runWithPrismaRetry(
+    () =>
+      prisma.product.count({
+        where: productsWhere,
+      }),
+    { label: "Catalog total count query" },
+  );
   const totalPages = Math.max(1, Math.ceil(totalItems / PRODUCTS_PER_PAGE));
   const currentPage = Math.min(state.page, totalPages);
   const skip = (currentPage - 1) * PRODUCTS_PER_PAGE;
 
-  const [items, categories, brands] = await Promise.all([
-    prisma.product.findMany({
-      where: hasFilters ? where : undefined,
-      skip,
-      take: PRODUCTS_PER_PAGE,
-      orderBy: [{ isPopular: "desc" }, { createdAt: "desc" }],
-      include: {
-        brand: true,
-        category: true,
-        characteristics: {
-          orderBy: { createdAt: "asc" },
-        },
-      },
-    }),
-    prisma.category.findMany({
-      orderBy: { name: "asc" },
-      select: {
-        slug: true,
-        name: true,
-        _count: {
-          select: {
-            products: true,
-          },
-        },
-      },
-    }),
-    prisma.brand.findMany({
-      orderBy: { name: "asc" },
-      select: {
-        slug: true,
-        name: true,
-        _count: {
-          select: {
-            products: {
-              where: hasFilters && state.category
-                ? { category: { slug: state.category } }
-                : undefined,
+  const [items, categories, brands] = await runWithPrismaRetry(
+    () =>
+      Promise.all([
+        prisma.product.findMany({
+          where: productsWhere,
+          skip,
+          take: PRODUCTS_PER_PAGE,
+          orderBy: [{ isPopular: "desc" }, { createdAt: "desc" }],
+          include: {
+            brand: true,
+            category: true,
+            characteristics: {
+              orderBy: { createdAt: "asc" },
             },
           },
-        },
-      },
-    }),
-  ]);
+        }),
+        prisma.category.findMany({
+          orderBy: { name: "asc" },
+          select: {
+            slug: true,
+            name: true,
+            _count: {
+              select: {
+                products: {
+                  where: categoriesCountWhere,
+                },
+              },
+            },
+          },
+        }),
+        prisma.brand.findMany({
+          orderBy: { name: "asc" },
+          select: {
+            slug: true,
+            name: true,
+            _count: {
+              select: {
+                products: {
+                  where: brandsCountWhere,
+                },
+              },
+            },
+          },
+        }),
+      ]),
+    { label: "Catalog page data query" },
+  );
 
   return {
     state: { ...state, page: currentPage },
@@ -276,6 +304,11 @@ const createCacheKey = (
 export const getCatalogPageData = async (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
+  const rawSearch = Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q;
+  if (rawSearch) {
+    return _getCatalogPageData(searchParams);
+  }
+
   const cacheKey = createCacheKey(searchParams);
   const cachedFn = unstable_cache(_getCatalogPageData, [`catalog-${cacheKey}`], {
     revalidate: 3600,

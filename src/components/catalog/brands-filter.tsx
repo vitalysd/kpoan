@@ -15,6 +15,21 @@ export function BrandsFilter({ options }: BrandsFilterProps) {
   return (
     <FilterSection title="Бренды">
       <div className="grid gap-2">
+        <button
+          type="button"
+          onClick={() => setSingleValue("brand", null)}
+          aria-pressed={active === ""}
+          className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
+            active === ""
+              ? "border-cyan-600 bg-cyan-600 text-white"
+              : "border-slate-200 bg-slate-50 text-slate-700 hover:border-cyan-500 hover:text-cyan-700"
+          }`}
+        >
+          <span>Все бренды</span>
+          <span className={active === "" ? "text-white/80" : "text-slate-400"}>
+            {options.reduce((sum, option) => sum + option.count, 0)}
+          </span>
+        </button>
         {options.map((option) => {
           const isActive = active === option.slug;
 
@@ -23,6 +38,7 @@ export function BrandsFilter({ options }: BrandsFilterProps) {
               key={option.slug}
               type="button"
               onClick={() => setSingleValue("brand", isActive ? null : option.slug)}
+              aria-pressed={isActive}
               className={`flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
                 isActive
                   ? "border-cyan-600 bg-cyan-600 text-white"

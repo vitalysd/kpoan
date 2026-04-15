@@ -1,70 +1,47 @@
 "use client";
 
+import { useRef } from "react";
+import { Search, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCatalogQuery } from "@/components/catalog/use-catalog-query";
-import { Search, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
 
 export function SearchInput() {
   const searchParams = useSearchParams();
   const { setSingleValue } = useCatalogQuery();
-  const initialValue = searchParams.get("q") ?? "";
-  const [value, setValue] = useState(initialValue);
-  const [isOpen, setIsOpen] = useState(!!initialValue);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const formRef = useRef<HTMLFormElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const initialValue = searchParams.get("q") ?? "";
 
-  useEffect(() => {
-    setValue(initialValue);
-    setIsOpen(!!initialValue);
-  }, [initialValue]);
+  const handleSubmit = (formData: FormData) => {
+    const value = String(formData.get("q") ?? "").trim();
+    setSingleValue("q", value || null);
+  };
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const nextValue = e.target.value;
-      setValue(nextValue);
-
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
-      if (!nextValue.trim()) {
-        setSingleValue("q", null);
-        return;
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setSingleValue("q", nextValue.trim());
-      }, 350);
-    },
-    [setSingleValue],
-  );
-
-  const handleClear = useCallback(() => {
-    setValue("");
+  const handleClear = () => {
+    formRef.current?.reset();
     setSingleValue("q", null);
     inputRef.current?.focus();
-  }, [setSingleValue]);
+  };
 
   return (
-    <div className="relative">
+    <form
+      ref={formRef}
+      action={handleSubmit}
+      className="relative"
+      key={initialValue}
+    >
       <div className="flex items-center rounded-xl border border-slate-300 bg-white shadow-sm transition-colors focus-within:border-cyan-500 focus-within:ring-1 focus-within:ring-cyan-500">
         <Search className="ml-3 h-4 w-4 shrink-0 text-slate-400" />
         <input
           ref={inputRef}
           type="text"
-          value={value}
-          onChange={handleChange}
+          name="q"
+          defaultValue={initialValue}
           placeholder="Поиск по названию, артикулу…"
           className="w-full border-0 bg-transparent px-3 py-2.5 text-sm text-slate-900 placeholder-slate-400 outline-none"
-          onFocus={() => setIsOpen(true)}
           aria-label="Поиск товаров"
         />
-        {value && (
+        {initialValue ? (
           <button
             type="button"
             onClick={handleClear}
@@ -73,8 +50,14 @@ export function SearchInput() {
           >
             <X className="h-3.5 w-3.5" />
           </button>
-        )}
+        ) : null}
+        <button
+          type="submit"
+          className="mr-2 rounded-lg bg-cyan-600 px-3 py-1.5 text-xs text-white transition-colors hover:bg-cyan-700"
+        >
+          Найти
+        </button>
       </div>
-    </div>
+    </form>
   );
 }

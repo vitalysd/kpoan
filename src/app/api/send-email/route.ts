@@ -85,8 +85,18 @@ function validateFile(file: File): string | null {
   return null;
 }
 
-// --- Инициализация Resend ---
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resendClient: Resend | null = null;
+
+function getResendClient(): Resend {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Missing RESEND_API_KEY environment variable');
+  }
+
+  resendClient ??= new Resend(apiKey);
+  return resendClient;
+}
 
 export async function POST(request: Request) {
   try {
@@ -172,7 +182,7 @@ export async function POST(request: Request) {
           ]
         : undefined;
 
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: 'Сайт <info@kpoan.ru>',
       to: ['info@kpoan.ru'],
       subject: `Новая заявка от ${safeSubjectName} (${safeSubjectCompany})`,
@@ -193,6 +203,14 @@ export async function POST(request: Request) {
     if (process.env.NODE_ENV === 'development') {
       console.error('Ошибка отправки email:', error);
     }
+
+    if (error instanceof Error && error.message.includes('Missing RESEND_API_KEY')) {
+      return NextResponse.json(
+        { error: 'Email service is not configured' },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json(
       { error: 'Ошибка отправки. Попробуйте позже.' },
       { status: 500 },

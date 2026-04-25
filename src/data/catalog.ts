@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 // Seed-данные для каталога.
 // Используется в prisma/seed.ts для заполнения БД.
@@ -8,11 +9,15 @@ import {
   Box,
   Drill,
   Gauge,
+  Flame,
   Hammer,
   HardHat,
+  KeyRound,
   Settings,
   ShieldCheck,
 } from "lucide-react";
+import { lockHardwareRows } from "@/data/lock-hardware";
+import { kedrPriceRows } from "@/data/kedr-pricelist";
 import type { CatalogCategory, CatalogProduct } from "@/types/catalog";
 
 /**
@@ -135,6 +140,28 @@ export const catalogCategories: CatalogCategory[] = [
     icon: Settings,
   },
   {
+    id: "cat-vibrooborudovanie",
+    slug: "vibrooborudovanie",
+    name: "Виброоборудование",
+    description:
+      "Площадочные и глубинные вибраторы, а также комплектующие для уплотнения бетонной смеси.",
+    image: null,
+    createdAt: now,
+    updatedAt: now,
+    icon: Settings,
+  },
+  {
+    id: "cat-zamki-i-furnitura",
+    slug: "zamki-i-furnitura",
+    name: "Замки и фурнитура",
+    description:
+      "Врезные, накладные и навесные замки, доводчики, цилиндры, петли и дверная фурнитура.",
+    image: null,
+    createdAt: now,
+    updatedAt: now,
+    icon: KeyRound,
+  },
+  {
     id: "cat-radiostancii",
     slug: "radiostancii",
     name: "Радиостанции",
@@ -177,6 +204,17 @@ export const catalogCategories: CatalogCategory[] = [
     createdAt: now,
     updatedAt: now,
     icon: Settings,
+  },
+  {
+    id: "cat-gazosvarochnoe-oborudovanie",
+    slug: "gazosvarochnoe-oborudovanie",
+    name: "Газосварочное оборудование",
+    description:
+      "Редукторы, резаки, горелки и арматура для газосварочных работ и обслуживания постов.",
+    image: null,
+    createdAt: now,
+    updatedAt: now,
+    icon: Flame,
   },
   {
     id: "cat-skladskoe-i-gruzopodemnoe-oborudovanie",
@@ -358,6 +396,22 @@ const brands = {
     id: "brand-huter",
     slug: "huter",
     name: "Huter",
+    logo: null,
+    createdAt: now,
+    updatedAt: now,
+  },
+  krasnyjMayak: {
+    id: "brand-krasnyj-mayak",
+    slug: "krasnyj-mayak",
+    name: "Красный Маяк",
+    logo: null,
+    createdAt: now,
+    updatedAt: now,
+  },
+  kedr: {
+    id: "brand-kedr",
+    slug: "kedr",
+    name: "КЕДР",
     logo: null,
     createdAt: now,
     updatedAt: now,
@@ -1319,6 +1373,118 @@ SALE! Тепловая электрическая пушка ТЭПК-3K (кер
 Лампа светодиодная LL-R-A80-20W-230-6K-E27 (груша, 20Вт, холод., Е27) Ресанта|Ресанта
 Лампа светодиодная LL-R-A95-25W-230-4K-E27 (груша, 25Вт, нейтр., Е27) Ресанта|Ресанта
 Лампа светодиодная LL-R-C37-5W-230-3K-E14 (свеча, 5Вт, тепл., Е14) Ресанта|Ресанта
+КРАСНЫЙ МАЯК ИВ-103 114|Красный Маяк
+КРАСНЫЙ МАЯК АR-50|Красный Маяк
+КРАСНЫЙ МАЯК АR-60|Красный Маяк
+КРАСНЫЙ МАЯК АR-75|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-260 51 /|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-260.02|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-75.03|Красный Маяк
+КРАСНЫЙ МАЯК ТТ 25 /|Красный Маяк
+КМ 01-50 PRO|Красный Маяк
+КМ 01-50Е PRO|Красный Маяк
+КМ 98 PRO|Красный Маяк
+КМ 98Е PRO|Красный Маяк
+КМ 99 PRO|Красный Маяк
+КМ 99Е PRO|Красный Маяк
+КМ 107 PRO|Красный Маяк
+КМ 104 PRO|Красный Маяк
+КМ 106 PRO|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-320|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-320Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б М|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Б М|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99E|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-101Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-101Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-101Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б  А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б  А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б  М|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б  М|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107А|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107А-П|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107А-1,5|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107А-1,5|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-105-2.2|Красный Маяк
+КРАСНЫЙ МАЯК ЭВ-320-4|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-0.5-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-0.5-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-127Э|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-127|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-127|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-106Э1|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-106Э|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Б-6|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Б|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-106|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-105|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-99Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-98Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107Н-1.5|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-107Н-1.5|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-105Н-2.2|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-2,5-25Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-127Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-127Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Н-6|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-104Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-106Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-105Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-105Н|Красный Маяк
+КРАСНЫЙ МАЯК 99|Красный Маяк
+КРАСНЫЙ МАЯК 99|Красный Маяк
+КРАСНЫЙ МАЯК 99Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-01-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-01-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-01-50Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-02-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-02-50 (плавная регулировка)|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-05-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-05-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-05-50Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-05-50Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-10-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-11-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-11-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-11-50Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-11-50Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-11-50Е|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-20-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-20-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-20-50Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-20-50Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-40-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-60-50|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-1,3-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-1,3-25Н|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-2,5-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-2,5-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-06-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-06-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-12-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-25-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-35-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-43-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-60-25|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-05-16|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-23-16|Красный Маяк
+КРАСНЫЙ МАЯК ИВ-60-16|Красный Маяк
 `.trim();
 
 const importedBrandIndex = {
@@ -1326,19 +1492,94 @@ const importedBrandIndex = {
   Eurolux: brands.eurolux,
   Ресанта: brands.resanta,
   Huter: brands.huter,
+  "Красный Маяк": brands.krasnyjMayak,
 } as const;
+
+const kedrBrand = brands.kedr;
+
+const createImportedBrand = (slug: string, name: string) => ({
+  id: `brand-${slug}`,
+  slug,
+  name,
+  logo: null,
+  createdAt: now,
+  updatedAt: now,
+});
+
+const lockHardwareBrandIndex = {
+  АЛЛЮР: createImportedBrand("allur", "Аллюр"),
+  Апекс: createImportedBrand("apeks", "Апекс"),
+  AVERS: createImportedBrand("avers", "AVERS"),
+  Балашиха: createImportedBrand("balashiha", "Балашиха"),
+  БУЛАТ: createImportedBrand("bulat", "Булат"),
+  Гардиан: createImportedBrand("gardian", "Гардиан"),
+  "Д-град": createImportedBrand("d-grad", "Д-град"),
+  KALE: createImportedBrand("kale", "KALE"),
+  Крит: createImportedBrand("krit", "Крит"),
+  Кунгур: createImportedBrand("kungur", "Кунгур"),
+  ЛДМ: createImportedBrand("ldm", "ЛДМ"),
+  MCL: createImportedBrand("mcl", "MCL"),
+  NOTEDO: createImportedBrand("notedo", "NOTEDO"),
+  Птимаш: createImportedBrand("ptimash", "Птимаш"),
+  Рязань: createImportedBrand("ryazan", "Рязань"),
+  "С-Пб": createImportedBrand("s-pb", "С-Пб"),
+  Сенат: createImportedBrand("senat", "Сенат"),
+  StahlBuro: createImportedBrand("stahlburo", "StahlBuro"),
+  СТАНДАРТ: createImportedBrand("standart", "Стандарт"),
+  Эльбор: createImportedBrand("elbor", "Эльбор"),
+} as const;
+
+const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 
 const cleanImportedProductName = (name: string, brandName: string) =>
   name
     .replace(/^(АКЦИЯ!|Акция!|SALE!)\s*/u, "")
     .replace(/\s+Grey\s+/u, " ")
-    .replace(new RegExp(`\\s+${brandName}$`, "u"), "")
+    .replace(new RegExp(`^${escapeRegExp(brandName)}\\s+`, "iu"), "")
+    .replace(new RegExp(`\\s+${escapeRegExp(brandName)}$`, "iu"), "")
     .replace(/\s+(HUTER|Huter|Ресанта|Вихрь|Eurolux)$/u, "")
+    .replace(/\s*\/\s*$/u, "")
     .replace(/_{2,}/gu, " ")
     .replace(/\s{2,}/gu, " ")
     .trim();
 
+const normalizeSlugSuffix = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/gu, "-")
+    .replace(/^-+|-+$/g, "");
+
+const cleanKedrProductName = (name: string) =>
+  name
+    .replace(/^(АКЦИЯ!|Акция!|SALE!|НОВИНКА!|Новинка!)\s*/gu, "")
+    .replace(/^КЕДР\s+/u, "")
+    .replace(/\s+КЕДР$/u, "")
+    .replace(/\s{2,}/gu, " ")
+    .trim();
+
+const getKedrSheetSlug = (sheet: string) => {
+  switch (sheet) {
+    case "Оборудование КЕДР":
+      return "equipment";
+    case "Расходные материалы КЕДР":
+      return "consumables";
+    case "Газосварочное оборудование":
+      return "gas-welding";
+    default:
+      return "kedr";
+  }
+};
+
+const getKedrCategory = (sheet: string) =>
+  sheet === "Газосварочное оборудование"
+    ? categoryIndex["gazosvarochnoe-oborudovanie"]
+    : categoryIndex["svarochnoe-oborudovanie-i-komplektuyushchie"];
+
 const getImportedCategory = (name: string) => {
+  if (/^(99Е?\b|ИВ-|[АA][РR]-|ЭВ-|ТТ\b|КМ\b)/u.test(name)) {
+    return categoryIndex["vibrooborudovanie"];
+  }
+
   if (
     name.includes("Свароч") ||
     name.includes("Аппарат для сварки") ||
@@ -1492,6 +1733,112 @@ const importedCatalogProducts = Array.from(
         productId,
         name: "imported",
         value: "true",
+        createdAt: now,
+      },
+    ],
+  });
+});
+
+const importedLockHardwareProducts = Array.from(
+  new Map(
+    lockHardwareRows.map((row) => [`${row.brand}:${row.code}`, row]),
+  ).values(),
+).map((row, index) => {
+  const brand = lockHardwareBrandIndex[row.brand as keyof typeof lockHardwareBrandIndex];
+
+  if (!brand) {
+    throw new Error(`Unknown lock hardware brand: ${row.brand}`);
+  }
+
+  const productId = `prd-lock-hardware-${String(index + 1).padStart(3, "0")}`;
+  const characteristicId = `ch-lock-hardware-${String(index + 1).padStart(3, "0")}`;
+  const slugSuffix = normalizeSlugSuffix(row.code) || String(index + 1).padStart(3, "0");
+
+  return createProduct({
+    id: productId,
+    slug: `zamki-furnitura-${brand.slug}-${slugSuffix}`,
+    sku: row.code,
+    name: row.name,
+    shortDescription: `Замки и фурнитура: ${row.section}.`,
+    description: null,
+    price: row.price,
+    oldPrice: null,
+    rating: 0,
+    reviewCount: 0,
+    inStock: true,
+    isNew: false,
+    isPopular: false,
+    images: [],
+    brandId: brand.id,
+    categoryId: categoryIndex["zamki-i-furnitura"].id,
+    brand,
+    category: categoryIndex["zamki-i-furnitura"],
+    characteristics: [
+      {
+        id: characteristicId,
+        productId,
+        name: "section",
+        value: row.section,
+        createdAt: now,
+      },
+    ],
+  });
+});
+
+const kedrSkuUsage = new Map<string, number>();
+const kedrCatalogProducts = kedrPriceRows.map((row) => {
+  const category = getKedrCategory(row.sheet);
+  const slugSection = getKedrSheetSlug(row.sheet);
+  const slugCode = normalizeSlugSuffix(row.code);
+  const productId = `prd-kedr-${slugSection}-${String(row.row).padStart(4, "0")}`;
+  const characteristicId = `ch-kedr-${slugSection}-${String(row.row).padStart(4, "0")}`;
+  const productName = cleanKedrProductName(row.name);
+  const skuUsage = kedrSkuUsage.get(row.code) ?? 0;
+  kedrSkuUsage.set(row.code, skuUsage + 1);
+
+  return createProduct({
+    id: productId,
+    slug: `kedr-${slugSection}-${slugCode}-${String(row.row).padStart(4, "0")}`,
+    sku: skuUsage === 0 ? row.code : null,
+    name: productName,
+    shortDescription: `${row.sheet}: ${row.section}.`,
+    description: null,
+    price: row.price,
+    oldPrice: null,
+    rating: 0,
+    reviewCount: 0,
+    inStock: true,
+    isNew: false,
+    isPopular: false,
+    images: [],
+    brandId: kedrBrand.id,
+    categoryId: category.id,
+    brand: kedrBrand,
+    category,
+    characteristics: [
+      {
+        id: characteristicId,
+        productId,
+        name: "section",
+        value: row.section,
+        createdAt: now,
+      },
+      ...(row.characteristics
+        ? [
+            {
+              id: `ch-kedr-${slugSection}-${String(row.row).padStart(4, "0")}-specs`,
+              productId,
+              name: "specifications",
+              value: row.characteristics,
+              createdAt: now,
+            },
+          ]
+        : []),
+      {
+        id: `ch-kedr-${slugSection}-${String(row.row).padStart(4, "0")}-sheet`,
+        productId,
+        name: "sheet",
+        value: row.sheet,
         createdAt: now,
       },
     ],
@@ -1710,4 +2057,6 @@ export const catalogProducts: CatalogProduct[] = [
   ...antiTokProducts,
   ...arcusProducts,
   ...importedCatalogProducts,
+  ...importedLockHardwareProducts,
+  ...kedrCatalogProducts,
 ];

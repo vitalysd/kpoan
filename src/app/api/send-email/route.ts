@@ -17,6 +17,15 @@ function getIpFromRequest(request: Request): string {
   );
 }
 
+function isAllowedOrigin(origin: string, host: string): boolean {
+  try {
+    const originUrl = new URL(origin);
+    return originUrl.host === host;
+  } catch {
+    return false;
+  }
+}
+
 function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
   const now = Date.now();
   const entry = rateLimitMap.get(ip);
@@ -84,7 +93,7 @@ export async function POST(request: Request) {
     // Origin check — простая защита от CSRF
     const origin = request.headers.get('origin');
     const host = request.headers.get('host');
-    if (origin && host && !origin.includes(host)) {
+    if (origin && host && !isAllowedOrigin(origin, host)) {
       return NextResponse.json(
         { error: 'Запрос отклонён (origin mismatch)' },
         { status: 403 },

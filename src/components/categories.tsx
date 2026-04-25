@@ -6,7 +6,10 @@ import { getCatalogCategories } from "@/lib/catalog";
 const featuredCategoryOrder = [
     "elektroinstrument",
     "promyshlennoe-oborudovanie",
+    "vibrooborudovanie",
+    "zamki-i-furnitura",
     "svarochnoe-oborudovanie-i-komplektuyushchie",
+    "gazosvarochnoe-oborudovanie",
     "dorozhnoe-i-garazhnoe-oborudovanie",
     "skladskoe-i-gruzopodemnoe-oborudovanie",
     "benzoinstrument-sadovaya-tekhnika",

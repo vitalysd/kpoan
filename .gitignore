@@ -5,6 +5,11 @@
 .env.local
 .env.*.local
 
+# local tool and IDE settings
+.idea/
+.qwen/
+.qwen/*.orig
+
 # dependencies
 /node_modules
 /.pnp

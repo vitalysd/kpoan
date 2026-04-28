@@ -1,5 +1,12 @@
 import type { MetadataRoute } from 'next';
+import { catalogCategories } from '@/data/catalog';
 import { prisma, runWithPrismaRetry } from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
+
+const isSeedCatalogMode =
+  process.env.CATALOG_DATA_SOURCE === 'seed' ||
+  process.env.NODE_ENV === 'production';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kpoan.ru';
@@ -21,6 +28,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Динамические страницы каталога (по категориям)
+  if (isSeedCatalogMode) {
+    for (const category of catalogCategories) {
+      routes.push({
+        url: `${siteUrl}/catalog?category=${category.slug}`,
+        lastModified: new Date(category.updatedAt),
+        changeFrequency: 'weekly',
+        priority: 0.7,
+      });
+    }
+
+    return routes;
+  }
+
   try {
     const categories = await runWithPrismaRetry(
       () =>
@@ -40,7 +60,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
   } catch {
-    // Если БД недоступна — возвращаем хотя бы статические маршруты
+    for (const category of catalogCategories) {
+      routes.push({
+        url: `${siteUrl}/catalog?category=${category.slug}`,
+        lastModified: new Date(category.updatedAt),
+        changeFrequency: 'weekly',
+        priority: 0.7,
+      });
+    }
   }
 
   return routes;

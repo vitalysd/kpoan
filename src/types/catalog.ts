@@ -85,6 +85,8 @@ export type CatalogPageData = {
   currentPage: number;
   categories: FilterOption[];
   brands: FilterOption[];
+  dataSource: "database" | "seed";
+  notice?: string;
 };
 
 export type FilterOption = {

@@ -5,6 +5,9 @@ import { ProductCard } from "@/components/catalog/product-card";
 import { SearchInput } from "@/components/catalog/search-input";
 import { Reveal } from "@/components/reveal";
 import { getCatalogPageData } from "@/lib/catalog";
+import type { CatalogPageData } from "@/types/catalog";
+
+export const dynamic = "force-dynamic";
 
 type CatalogPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -58,7 +61,8 @@ async function CatalogRouteInner({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const data = await getCatalogPageData(await searchParams);
+  const data: CatalogPageData = await getCatalogPageData(await searchParams);
+
   const hasActiveFilters = data.state.search || data.state.category || data.state.brand;
 
   const getPageHeading = () => {

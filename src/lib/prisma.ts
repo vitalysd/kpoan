@@ -5,6 +5,8 @@ const databaseUrl =
   process.env.PRISMA_DATABASE_URL ??
   process.env.POSTGRES_URL;
 
+process.env.DATABASE_URL ??= databaseUrl;
+
 const globalForPrisma = globalThis as typeof globalThis & {
   prisma?: PrismaClient;
 };

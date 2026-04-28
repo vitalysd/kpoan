@@ -63,6 +63,34 @@ type RawProduct = {
 
 export const PRODUCTS_PER_PAGE = 15;
 
+const isProductionBuild =
+  process.env.NEXT_PHASE === "phase-production-build" ||
+  process.env.npm_lifecycle_event === "build";
+const isSeedCatalogMode =
+  process.env.CATALOG_DATA_SOURCE === "seed" ||
+  process.env.NODE_ENV === "production" ||
+  isProductionBuild;
+
+const getFallbackCatalogCategories = async (): Promise<CatalogCategory[]> => {
+  const { catalogCategories } = await import("@/data/catalog");
+  return catalogCategories;
+};
+
+const getFallbackCatalogSnapshot = async () => {
+  const { catalogCategories, catalogProducts } = await import("@/data/catalog");
+  return { categories: catalogCategories, products: catalogProducts };
+};
+
+const getDatabaseUrl = () =>
+  process.env.DATABASE_URL ??
+  process.env.PRISMA_DATABASE_URL ??
+  process.env.POSTGRES_URL;
+
+const hasUsableDatabaseUrl = () => {
+  const databaseUrl = getDatabaseUrl();
+  return Boolean(databaseUrl && !databaseUrl.includes("your-database-host"));
+};
+
 export const parseCatalogSearchParams = (
   searchParams: Record<string, string | string[] | undefined>,
 ): CatalogSearchState => {
@@ -144,15 +172,24 @@ const mapProduct = (product: RawProduct): CatalogProduct => ({
 });
 
 export const getCatalogCategories = async (): Promise<CatalogCategory[]> => {
-  const categories = await runWithPrismaRetry(
-    () =>
-      prisma.category.findMany({
-        orderBy: { name: "asc" },
-      }),
-    { label: "Catalog categories query" },
-  );
+  if (isSeedCatalogMode) {
+    return getFallbackCatalogCategories();
+  }
 
-  return categories.map(mapCategory);
+  try {
+    const categories = await runWithPrismaRetry(
+      () =>
+        prisma.category.findMany({
+          orderBy: { name: "asc" },
+        }),
+      { label: "Catalog categories query" },
+    );
+
+    return categories.map(mapCategory);
+  } catch (error) {
+    console.warn("Catalog categories query failed. Falling back to seed categories.", error);
+    return getFallbackCatalogCategories();
+  }
 };
 
 const buildCatalogWhere = (
@@ -191,6 +228,109 @@ const buildCatalogWhere = (
   return Object.keys(where).length > 0 ? where : undefined;
 };
 
+const matchesCatalogState = (product: CatalogProduct, state: CatalogSearchState) => {
+  if (state.category && product.category.slug !== state.category) {
+    return false;
+  }
+
+  if (state.brand && product.brand.slug !== state.brand) {
+    return false;
+  }
+
+  if (!state.search) {
+    return true;
+  }
+
+  const searchNeedle = state.search.toLowerCase();
+  const searchHaystack = [
+    product.name,
+    product.sku,
+    product.shortDescription,
+    ...product.characteristics.map((characteristic) => characteristic.value),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return searchHaystack.includes(searchNeedle);
+};
+
+const sortCatalogProducts = (items: CatalogProduct[]) =>
+  [...items].sort((left, right) => {
+    if (left.isPopular !== right.isPopular) {
+      return Number(right.isPopular) - Number(left.isPopular);
+    }
+
+    return right.createdAt.localeCompare(left.createdAt);
+  });
+
+const buildFilterOptions = (
+  items: CatalogProduct[],
+  options: { type: "category" | "brand"; state: CatalogSearchState },
+): FilterOption[] => {
+  const grouped = new Map<string, FilterOption>();
+  const filteredItems = items.filter((product) => {
+    if (options.type === "category" && options.state.brand && product.brand.slug !== options.state.brand) {
+      return false;
+    }
+
+    if (options.type === "brand" && options.state.category && product.category.slug !== options.state.category) {
+      return false;
+    }
+
+    if (!options.state.search) {
+      return true;
+    }
+
+    return matchesCatalogState(product, {
+      ...options.state,
+      category: options.type === "brand" ? undefined : options.state.category,
+      brand: options.type === "category" ? undefined : options.state.brand,
+    });
+  });
+
+  for (const product of filteredItems) {
+    const key = options.type === "category" ? product.category.slug : product.brand.slug;
+    const label = options.type === "category" ? product.category.name : product.brand.name;
+    const current = grouped.get(key);
+
+    if (current) {
+      current.count += 1;
+      continue;
+    }
+
+    grouped.set(key, { slug: key, label, count: 1 });
+  }
+
+  return [...grouped.values()].sort((left, right) => left.label.localeCompare(right.label, "ru"));
+};
+
+const getFallbackCatalogPageData = async (
+  searchParams: Record<string, string | string[] | undefined>,
+): Promise<CatalogPageData> => {
+  const state = parseCatalogSearchParams(searchParams);
+  const { products } = await getFallbackCatalogSnapshot();
+  const sortedProducts = sortCatalogProducts(products);
+  const filteredProducts = sortedProducts.filter((product) => matchesCatalogState(product, state));
+  const totalItems = filteredProducts.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PRODUCTS_PER_PAGE));
+  const currentPage = Math.min(state.page, totalPages);
+  const skip = (currentPage - 1) * PRODUCTS_PER_PAGE;
+
+  return {
+    state: { ...state, page: currentPage },
+    items: filteredProducts.slice(skip, skip + PRODUCTS_PER_PAGE),
+    totalItems,
+    totalPages,
+    currentPage,
+    categories: buildFilterOptions(products, { type: "category", state }),
+    brands: buildFilterOptions(products, { type: "brand", state }),
+    dataSource: "seed",
+    notice:
+      "Каталог показан из локальной витрины, потому что подключение к основной базе данных сейчас недоступно.",
+  };
+};
+
 /**
  * Внутренняя функция получения данных каталога.
  * Оборачивается в unstable_cache для кэширования.
@@ -198,87 +338,97 @@ const buildCatalogWhere = (
 const _getCatalogPageData = async (
   searchParams: Record<string, string | string[] | undefined>,
 ): Promise<CatalogPageData> => {
-  const state = parseCatalogSearchParams(searchParams);
-  const productsWhere = buildCatalogWhere(state);
-  const brandsCountWhere = buildCatalogWhere(state, { includeBrand: false });
-  const categoriesCountWhere = buildCatalogWhere(state, { includeCategory: false });
+  if (isSeedCatalogMode || !hasUsableDatabaseUrl()) {
+    return getFallbackCatalogPageData(searchParams);
+  }
 
-  const totalItems = await runWithPrismaRetry(
-    () =>
-      prisma.product.count({
-        where: productsWhere,
-      }),
-    { label: "Catalog total count query" },
-  );
-  const totalPages = Math.max(1, Math.ceil(totalItems / PRODUCTS_PER_PAGE));
-  const currentPage = Math.min(state.page, totalPages);
-  const skip = (currentPage - 1) * PRODUCTS_PER_PAGE;
+  try {
+    const state = parseCatalogSearchParams(searchParams);
+    const productsWhere = buildCatalogWhere(state);
+    const brandsCountWhere = buildCatalogWhere(state, { includeBrand: false });
+    const categoriesCountWhere = buildCatalogWhere(state, { includeCategory: false });
 
-  const [items, categories, brands] = await runWithPrismaRetry(
-    () =>
-      Promise.all([
-        prisma.product.findMany({
+    const totalItems = await runWithPrismaRetry(
+      () =>
+        prisma.product.count({
           where: productsWhere,
-          skip,
-          take: PRODUCTS_PER_PAGE,
-          orderBy: [{ isPopular: "desc" }, { createdAt: "desc" }],
-          include: {
-            brand: true,
-            category: true,
-            characteristics: {
-              orderBy: { createdAt: "asc" },
-            },
-          },
         }),
-        prisma.category.findMany({
-          orderBy: { name: "asc" },
-          select: {
-            slug: true,
-            name: true,
-            _count: {
-              select: {
-                products: {
-                  where: categoriesCountWhere,
-                },
-              },
-            },
-          },
-        }),
-        prisma.brand.findMany({
-          orderBy: { name: "asc" },
-          select: {
-            slug: true,
-            name: true,
-            _count: {
-              select: {
-                products: {
-                  where: brandsCountWhere,
-                },
-              },
-            },
-          },
-        }),
-      ]),
-    { label: "Catalog page data query" },
-  );
+      { label: "Catalog total count query" },
+    );
+    const totalPages = Math.max(1, Math.ceil(totalItems / PRODUCTS_PER_PAGE));
+    const currentPage = Math.min(state.page, totalPages);
+    const skip = (currentPage - 1) * PRODUCTS_PER_PAGE;
 
-  return {
-    state: { ...state, page: currentPage },
-    items: items.map(mapProduct),
-    totalItems,
-    totalPages,
-    currentPage,
-    categories: categories.map((category): FilterOption => ({
-      slug: category.slug,
-      label: category.name,
-      count: category._count.products,
-    })),
-    brands: brands.map((brand): FilterOption => ({
-      slug: brand.slug,
-      label: brand.name,
-      count: brand._count.products,
-    })),
-  };
+    const [items, categories, brands] = await runWithPrismaRetry(
+      () =>
+        Promise.all([
+          prisma.product.findMany({
+            where: productsWhere,
+            skip,
+            take: PRODUCTS_PER_PAGE,
+            orderBy: [{ isPopular: "desc" }, { createdAt: "desc" }],
+            include: {
+              brand: true,
+              category: true,
+              characteristics: {
+                orderBy: { createdAt: "asc" },
+              },
+            },
+          }),
+          prisma.category.findMany({
+            orderBy: { name: "asc" },
+            select: {
+              slug: true,
+              name: true,
+              _count: {
+                select: {
+                  products: {
+                    where: categoriesCountWhere,
+                  },
+                },
+              },
+            },
+          }),
+          prisma.brand.findMany({
+            orderBy: { name: "asc" },
+            select: {
+              slug: true,
+              name: true,
+              _count: {
+                select: {
+                  products: {
+                    where: brandsCountWhere,
+                  },
+                },
+              },
+            },
+          }),
+        ]),
+      { label: "Catalog page data query" },
+    );
+
+    return {
+      state: { ...state, page: currentPage },
+      items: items.map(mapProduct),
+      totalItems,
+      totalPages,
+      currentPage,
+      categories: categories.map((category): FilterOption => ({
+        slug: category.slug,
+        label: category.name,
+        count: category._count.products,
+      })),
+      brands: brands.map((brand): FilterOption => ({
+        slug: brand.slug,
+        label: brand.name,
+        count: brand._count.products,
+      })),
+      dataSource: "database",
+    };
+  } catch (error) {
+    console.warn("Catalog DB query failed. Falling back to local catalog data.", error);
+    return getFallbackCatalogPageData(searchParams);
+  }
 };
 
 /**

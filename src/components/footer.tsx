@@ -334,7 +334,7 @@ export function Footer() {
                         </Reveal>
 
                         {/* Right - Contacts */}
-                        <Reveal className="lg:pl-12" delay={120}>
+                        <Reveal className="lg:pl-12" delay={50}>
                             <h3 className="text-white mb-6">Контактная информация</h3>
 
                             <div className="space-y-6 mb-8">
@@ -344,8 +344,8 @@ export function Footer() {
                                     </div>
                                     <div>
                                         <div className="text-slate-400 text-sm mb-1">Телефон</div>
-                                        <a href="tel:+79080942106" className="text-white text-lg hover:text-cyan-600 transition-colors">
-                                            +7 (908) 094-21-06
+                                        <a href="tel:+73517777801" className="text-white text-lg hover:text-cyan-600 transition-colors">
+                                            +7 (351) 777-78-01
                                         </a>
                                     </div>
                                 </div>

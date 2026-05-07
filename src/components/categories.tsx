@@ -46,7 +46,7 @@ export async function Categories() {
                         return (
                             <Reveal
                                 key={category.id}
-                                delay={index * 70}
+                                delay={index * 30}
                             >
                                 <Link
                                 href={`/catalog?category=${category.slug}`}

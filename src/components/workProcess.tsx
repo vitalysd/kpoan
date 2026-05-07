@@ -54,7 +54,7 @@ export function WorkProcess() {
                             const isLast = index === steps.length - 1;
 
                             return (
-                                <Reveal key={step.title} className="relative" delay={index * 90}>
+                                <Reveal key={step.title} className="relative" delay={index * 35}>
                                     <div className="flex gap-6">
                                         <div className="relative flex-shrink-0">
                                             <div className="w-16 h-16 bg-cyan-600 rounded-full flex items-center justify-center text-white z-10 relative">
@@ -80,7 +80,7 @@ export function WorkProcess() {
                         })}
                     </div>
 
-                    <Reveal className="bg-white rounded-lg shadow-lg p-8" delay={140}>
+                    <Reveal className="bg-white rounded-lg shadow-lg p-8" delay={60}>
                         <h3 className="mb-6 text-center">Доставка по всей России</h3>
 
                         <div className="relative bg-slate-50 rounded-lg p-8 mb-6 min-h-[300px] flex items-center justify-center">

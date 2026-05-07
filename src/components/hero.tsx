@@ -69,7 +69,7 @@ export function Hero() {
             </div>
           </Reveal>
 
-          <Reveal className="relative" delay={120}>
+          <Reveal className="relative" delay={50}>
             <div className="relative rounded-lg overflow-hidden shadow-2xl">
               <Image
                 src="/hero.jpg"

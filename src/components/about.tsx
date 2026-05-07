@@ -59,7 +59,7 @@ export function About() {
                     </Reveal>
 
                     {/* Right - Image */}
-                    <Reveal className="relative rounded-lg overflow-hidden shadow-xl" delay={120}>
+                    <Reveal className="relative rounded-lg overflow-hidden shadow-xl" delay={50}>
                         <Image
                             src="/about.png"
                             className="w-full h-full object-cover"
@@ -80,7 +80,7 @@ export function About() {
                         <p className="text-slate-600 text-sm">Весь спектр оборудования в одном КП</p>
                     </Reveal>
 
-                    <Reveal className="text-center" delay={80}>
+                    <Reveal className="text-center" delay={30}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <ClipboardCheck className="w-6 h-6 text-cyan-600" />
                         </div>
@@ -88,7 +88,7 @@ export function About() {
                         <p className="text-slate-600 text-sm">Персональный менеджер и консультации</p>
                     </Reveal>
 
-                    <Reveal className="text-center" delay={160}>
+                    <Reveal className="text-center" delay={60}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <FileText className="w-6 h-6 text-cyan-600" />
                         </div>
@@ -96,7 +96,7 @@ export function About() {
                         <p className="text-slate-600 text-sm">Помощь в оформлении документов</p>
                     </Reveal>
 
-                    <Reveal className="text-center" delay={240}>
+                    <Reveal className="text-center" delay={90}>
                         <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center mx-auto mb-3 shadow-sm">
                             <CreditCard className="w-6 h-6 text-cyan-600" />
                         </div>

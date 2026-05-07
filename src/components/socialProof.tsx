@@ -39,7 +39,7 @@ export function SocialProof() {
                     {clientTypes.map((type, index) => {
                         const Icon = type.icon;
                         return (
-                            <Reveal key={type.title} delay={index * 70} className="text-center p-6 bg-slate-50 rounded-lg">
+                            <Reveal key={type.title} delay={index * 30} className="text-center p-6 bg-slate-50 rounded-lg">
                                 <div className="w-14 h-14 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 shadow-sm">
                                     <Icon className="w-7 h-7 text-cyan-600" />
                                 </div>

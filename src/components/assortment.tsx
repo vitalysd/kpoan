@@ -110,7 +110,7 @@ export function Assortment() {
           </Reveal>
 
           {/* Right - Content */}
-          <Reveal className="lg:col-span-2" delay={120}>
+          <Reveal className="lg:col-span-2" delay={50}>
             {assortmentData.map((category) => {
               if (openId !== category.id) return null;
 

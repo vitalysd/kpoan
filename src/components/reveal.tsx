@@ -18,7 +18,7 @@ export function Reveal({
   children,
   className = "",
   delay = 0,
-  distance = 36,
+  distance = 24,
   once = true,
   style,
   ...props
@@ -46,15 +46,15 @@ export function Reveal({
           timeoutId = setTimeout(() => {
             setIsVisible(true);
             if (once) observer.unobserve(entry.target);
-          }, 90);
+          }, 20);
         } else if (!once) {
           if (timeoutId) clearTimeout(timeoutId);
           setIsVisible(false);
         }
       },
       {
-        threshold: 0.12,
-        rootMargin: "0px 0px -12% 0px",
+        threshold: 0.06,
+        rootMargin: "0px 0px -4% 0px",
       },
     );
 

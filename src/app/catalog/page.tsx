@@ -119,7 +119,7 @@ async function CatalogRouteInner({
               {data.items.length > 0 ? (
                 <div className="space-y-4">
                   {data.items.map((product, index) => (
-                    <Reveal key={product.id} delay={index * 45}>
+                    <Reveal key={product.id} delay={index * 15}>
                       <ProductCard product={product} />
                     </Reveal>
                   ))}
@@ -135,7 +135,7 @@ async function CatalogRouteInner({
                 </Reveal>
               )}
 
-              <Reveal delay={120}>
+              <Reveal delay={50}>
                 <CatalogPagination
                   currentPage={data.currentPage}
                   totalPages={data.totalPages}

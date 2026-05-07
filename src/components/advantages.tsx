@@ -46,7 +46,7 @@ export function Advantages() {
                         return (
                             <Reveal
                                 key={advantage.title}
-                                delay={index * 70}
+                                delay={index * 30}
                                 className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                             >
                                 <div className="w-14 h-14 bg-slate-700/10 rounded-lg flex items-center justify-center mb-4">

@@ -61,15 +61,10 @@ type RawProduct = {
   characteristics: RawCharacteristic[];
 };
 
-export const PRODUCTS_PER_PAGE = 15;
+export const PRODUCTS_PER_PAGE = 30;
 
-const isProductionBuild =
-  process.env.NEXT_PHASE === "phase-production-build" ||
-  process.env.npm_lifecycle_event === "build";
 const isSeedCatalogMode =
-  process.env.CATALOG_DATA_SOURCE === "seed" ||
-  process.env.NODE_ENV === "production" ||
-  isProductionBuild;
+  process.env.CATALOG_DATA_SOURCE === "seed";
 
 const getFallbackCatalogCategories = async (): Promise<CatalogCategory[]> => {
   const { catalogCategories } = await import("@/data/catalog");
@@ -172,7 +167,7 @@ const mapProduct = (product: RawProduct): CatalogProduct => ({
 });
 
 export const getCatalogCategories = async (): Promise<CatalogCategory[]> => {
-  if (isSeedCatalogMode) {
+  if (isSeedCatalogMode || !hasUsableDatabaseUrl()) {
     return getFallbackCatalogCategories();
   }
 
@@ -255,14 +250,37 @@ const matchesCatalogState = (product: CatalogProduct, state: CatalogSearchState)
   return searchHaystack.includes(searchNeedle);
 };
 
-const sortCatalogProducts = (items: CatalogProduct[]) =>
-  [...items].sort((left, right) => {
-    if (left.isPopular !== right.isPopular) {
-      return Number(right.isPopular) - Number(left.isPopular);
-    }
-
-    return right.createdAt.localeCompare(left.createdAt);
+const compareCatalogText = (left: string, right: string) =>
+  left.localeCompare(right, "ru", {
+    sensitivity: "base",
+    numeric: true,
   });
+
+const compareCatalogProductsAlphabetically = (
+  left: CatalogProduct,
+  right: CatalogProduct,
+  state: CatalogSearchState,
+) => {
+  if (!state.category) {
+    const categoryCompare = compareCatalogText(left.category.name, right.category.name);
+    if (categoryCompare !== 0) return categoryCompare;
+  }
+
+  if (!state.brand) {
+    const brandCompare = compareCatalogText(left.brand.name, right.brand.name);
+    if (brandCompare !== 0) return brandCompare;
+  }
+
+  const nameCompare = compareCatalogText(left.name, right.name);
+  if (nameCompare !== 0) return nameCompare;
+
+  return compareCatalogText(left.slug, right.slug);
+};
+
+const sortCatalogProducts = (items: CatalogProduct[], state: CatalogSearchState) =>
+  [...items].sort((left, right) =>
+    compareCatalogProductsAlphabetically(left, right, state),
+  );
 
 const buildFilterOptions = (
   items: CatalogProduct[],
@@ -310,7 +328,7 @@ const getFallbackCatalogPageData = async (
 ): Promise<CatalogPageData> => {
   const state = parseCatalogSearchParams(searchParams);
   const { products } = await getFallbackCatalogSnapshot();
-  const sortedProducts = sortCatalogProducts(products);
+  const sortedProducts = sortCatalogProducts(products, state);
   const filteredProducts = sortedProducts.filter((product) => matchesCatalogState(product, state));
   const totalItems = filteredProducts.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / PRODUCTS_PER_PAGE));
@@ -366,7 +384,12 @@ const _getCatalogPageData = async (
             where: productsWhere,
             skip,
             take: PRODUCTS_PER_PAGE,
-            orderBy: [{ isPopular: "desc" }, { createdAt: "desc" }],
+            orderBy: [
+              ...(state.category ? [] : [{ category: { name: "asc" as const } }]),
+              ...(state.brand ? [] : [{ brand: { name: "asc" as const } }]),
+              { name: "asc" },
+              { slug: "asc" },
+            ],
             include: {
               brand: true,
               category: true,

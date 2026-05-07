@@ -79,7 +79,7 @@ export default function RootLayout({
     "logo": `${process.env.NEXT_PUBLIC_SITE_URL ?? "https://kpoan.ru"}/logo.svg`,
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+7-908-094-21-06",
+      "telephone": "+7-351-777-78-01",
       "email": "info@kpoan.ru",
       "contactType": "sales",
       "areaServed": "RU",

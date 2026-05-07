@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
-import { PageLoader } from "@/components/page-loader";
-import { ScrollToTopButton } from "@/components/scroll-to-top-button";
+import { SiteShell } from "@/components/site-shell";
 
 
 export const metadata: Metadata = {
@@ -128,11 +125,7 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <PageLoader />
-        <Header />
-        {children}
-        <ScrollToTopButton />
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   );
